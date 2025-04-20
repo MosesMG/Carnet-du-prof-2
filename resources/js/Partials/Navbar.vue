@@ -1,0 +1,139 @@
+<script setup>
+import { Link, useForm } from '@inertiajs/vue3';
+
+const today = new Date();
+const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+};
+const laDate = today.toLocaleDateString('fr-FR', options);
+
+const form = useForm({});
+const submit = () => {
+    form.post(route('logout'));
+} 
+</script>
+
+<template>
+    <!-- @php
+        $user = auth()->guard('web')->user();
+        $filieres = $user->filieres()->with('matieres')->get();
+
+        $matieres = [];
+        foreach ($filieres as $filiere) {
+            $matieres[] = $filiere->matieres->first();
+        }
+
+        $seances = [];
+        foreach ($matieres as $matiere) {
+            $seances[] = $matiere->seances;
+        }
+        $lesSeances = collect($seances)->collapse();
+
+        $notifications = [];
+        foreach ($lesSeances as $seance) {
+            $notifications[] = $seance->notifications;
+        }
+
+        $totalNotifs = count(collect($notifications)->collapse()->filter());
+    @endphp -->
+
+    <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+        <div class="container-fluid">
+
+            <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
+                <h5 class="mb-0 capitalize">
+                    {{ laDate }}
+                </h5>
+            </nav>
+
+            <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                <li class="nav-item topbar-icon dropdown hidden-caret">
+                    <Link class="nav-link" :href="route('dashboard')" title="Notifications">
+                        <i class="fa fa-bell"></i>
+                        <!-- @if ($totalNotifs > 0)
+                            <span class="notification bg-success-gradient fw-bold">{{ $totalNotifs }}</span>
+                        @endif -->
+                    </Link>
+                </li>
+
+                <li class="nav-item topbar-icon dropdown hidden-caret ms-2">
+                    <Link class="nav-link" :href="route('calendrier')" title="Calendrier">
+                        <i class="fas fa-calendar-alt"></i>
+                    </Link>
+                </li>
+
+                <li class="nav-item topbar-user dropdown hidden-caret">
+                    <a
+                        class="dropdown-toggle profile-pic"
+                        data-bs-toggle="dropdown"
+                        href="#"
+                        aria-expanded="false">
+                        <div class="avatar-sm">
+                            <!-- <img
+                                @if (session()->exists('avatar'))
+                                    src="{{ session('avatar') }}"
+                                @else
+                                    src="{{ asset('assets/images/user-icon.jpg') }}"
+                                @endif
+                                alt="avatar"
+                                class="avatar-img rounded-circle" /> -->
+                            <img src="/images/user-icon.jpg" alt="" class="avatar-img rounded-circle">
+                        </div>
+                        <span class="profile-username">
+                            <span class="op-8 fw-bold">{{ $page.props.auth.user.name }}</span>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user animated fadeIn">
+                        <div class="dropdown-user-scroll scrollbar-outer">
+                            <li>
+                                <div class="user-box align-items-center">
+                                    <div class="avatar-lg me-1">
+                                        <!-- <img
+                                            @if (session()->exists('avatar'))
+                                                src="{{ session('avatar') }}"
+                                            @else
+                                                src="{{ asset('assets/images/user-icon.jpg') }}"
+                                            @endif
+                                            alt="image_profile"
+                                            class="avatar-img rounded-4" /> -->
+
+                                        <img src="/images/user-icon.jpg" alt="image_profile" class="avatar-img rounded-4">
+                                    </div>
+                                    <div class="u-text px-0">
+                                        <h4>{{ $page.props.auth.user.name }}</h4>
+                                        <p class="text-muted">{{ $page.props.auth.user.email }}</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="dropdown-divider"></div>
+                                <Link class="dropdown-item" :href="route('dashboard')">
+                                    <i class="fas fa-home me-2"></i>
+                                    Accueil
+                                </Link>
+
+                                <div class="dropdown-divider"></div>
+                                <Link class="dropdown-item" :href="route('profile.edit')">
+                                    <i class="fas fa-user-gear me-2"></i>
+                                    Paramètres du profil
+                                </Link>
+
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-item">
+                                    <form @submit.prevent="submit"> 
+                                        <button type="submit" class="btn btn-danger w-100 text-uppercase">
+                                            Déconnexion
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        </div>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</template>
