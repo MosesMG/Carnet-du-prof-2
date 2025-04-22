@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('periode_id');
             $table->foreignId('user_id');
             $table->foreignId('matiere_id');
+            $table->float('taux_hr');
             $table->timestamps();
             $table->softDeletes();
         });

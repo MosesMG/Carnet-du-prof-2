@@ -12,11 +12,6 @@ class Niveau extends Model
         'libelle', 'description', 'diplome_id',
     ];
 
-    public function diplome(): BelongsTo
-    {
-        return $this->belongsTo(Diplome::class);
-    }
-
     public function filieres(): HasMany
     {
         return $this->hasMany(Filiere::class);

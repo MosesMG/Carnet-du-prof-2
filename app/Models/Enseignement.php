@@ -10,7 +10,8 @@ class Enseignement extends Model
     protected $fillable = [
         'periode_id',
         'user_id',
-        'matiere_id'
+        'matiere_id',
+        'taux_hr',
     ];
 
     public function user(): BelongsTo

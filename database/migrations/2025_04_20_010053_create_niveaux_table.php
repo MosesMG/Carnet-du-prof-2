@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('libelle');
             $table->string('description');
-            $table->foreignId('diplome_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

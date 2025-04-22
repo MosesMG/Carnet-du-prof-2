@@ -19,7 +19,7 @@
                     </a>
                 </li>
 
-                {{-- @auth('admin') --}}
+                @auth('admin')
 
                     <li class="nav-item dropdown pe-1 ms-3 d-flex align-items-center">
                         <a class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -29,7 +29,7 @@
                             <li class="mb-1">
                                 <p class="mb-0">
                                     <span class="text-sm font-weight-bold ms-2">
-                                        Nom & prénoms
+                                        {{ auth()->guard('admin')->user()->name }}
                                     </span>
                                 </p>
                             </li>
@@ -41,9 +41,11 @@
                                     </span>
                                 </a>
                             </li>
-                            <hr class="my-2">
+                            <hr class="mt-2 mb-3">
                             <li>
-                                <form action="" method="post" class="dropdown-item p-0">
+                                <form action="{{ route('admin.logout') }}" method="post" class="dropdown-item p-0">
+                                    @method('DELETE')
+                                    @csrf
 
                                     <div class="d-flex align-items-center">
                                         <button type="submit" class="btn btn-outline-info m-0">
@@ -56,7 +58,7 @@
                         </ul>
                     </li>
 
-                {{-- @endauth --}}
+                @endauth
 
             </ul>
         </div>

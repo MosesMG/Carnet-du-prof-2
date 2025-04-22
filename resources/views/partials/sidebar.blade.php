@@ -14,7 +14,9 @@
         <ul class="navbar-nav gap-2 text-uppercase">
 
             <li class="nav-item">
-                <a href="" class="nav-link text-white mx-1 active bg-gradient-info">
+                <a href="{{ route('admin.accueil') }}" 
+                    class="nav-link text-white mx-1 {{ request()->is('admin/home') ? 'active bg-gradient-info' : '' }}"
+                >
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fa fa-home"></i>
                     </div>
@@ -23,7 +25,9 @@
             </li>
 
             <li class="nav-item">
-                <a href="" class="nav-link text-white mx-1">
+                <a href="{{ route('admin.universites.index') }}" 
+                    class="nav-link text-white mx-1 {{ request()->is('admin/universite*') ? 'active bg-gradient-info' : '' }}"
+                >
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fa fa-school"></i>
                     </div>
