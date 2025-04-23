@@ -33,6 +33,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if (! Auth::guard('web')->user()->is_active) {
+
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+
+            return to_route('login')->withErrors([
+                'email' => "Votre compte a été bloqué par l'administrateur du site.",
+            ]);
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

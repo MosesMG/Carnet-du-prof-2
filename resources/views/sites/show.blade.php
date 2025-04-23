@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', "Détails sur l'université")
+@section('title', "Détails sur le site $site->nom")
 
 @section('sidebar')
     @include('partials.sidebar')
@@ -13,7 +13,7 @@
 @section('content')
     <div class="container">
         <div class="bg-gradient-info shadow-primary border-radius-lg py-3 w-100 my-5">
-            <h5 class="text-white ps-3 mb-0">{{ $universite->nom .' - '. $universite->description }}</h5>
+            <h5 class="text-white ps-3 mb-0">Site {{ $site->nom }}</h5>
         </div>
         
         <div class="row justify-content-center gap-7">
@@ -25,16 +25,16 @@
                     </button>
                 </div>
                 <div class="card-body pt-0 p-3 text-center">
-                    <h5 class="text-center mb-0">Nombre de site{{ $universite->sites->count() > 1 ? 's' : ''}}</h5>
-                    <span class="text-3xl">{{ $universite->sites->count() }}</span>
+                    <h5 class="text-center mb-0">Nombre de filières</h5>
+                    <span class="text-3xl">{{ $site->filieres->count() }}</span>
                 </div>
             </div>
 
         </div>
 
         <div class="d-flex justify-content-center my-5">
-            <a href="{{ route('admin.sites.index', $universite) }}" class="btn btn-info">
-                Voir plus d'informations
+            <a href="{{ route('admin.filieres.index', $site) }}" class="btn btn-info">
+                Voir les filières
             </a>
         </div>
 

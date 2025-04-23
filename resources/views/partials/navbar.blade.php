@@ -35,7 +35,7 @@
                             </li>
                             <hr class="my-2">
                             <li class="mb-1">
-                                <a href="" class="mb-0">
+                                <a href="{{ route('admin.profile') }}" class="mb-0">
                                     <span class="text-sm font-weight-bold ms-2">
                                         Profil
                                     </span>

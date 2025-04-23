@@ -7,7 +7,7 @@
     <title>@yield('title')</title>
     <link rel="stylesheet" href="{{ asset('admin/css/material-dashboard.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
-    {{-- @vite('resources/js/app.js') --}}
+    @livewireStyles
 </head>
 <body class="g-sidenav-show bg-gray-100 vh-100">
 
@@ -25,7 +25,6 @@
         @yield('content')
     </main>
 
-
     <script src="{{ asset('admin/js/core/popper.min.js') }}"></script>
     <script src="{{ asset('admin/js/core/bootstrap.min.js') }}"></script>
     <script src="{{ asset('admin/js/plugins/perfect-scrollbar.min.js') }}"></script>
@@ -33,5 +32,7 @@
     <script src="{{ asset('admin/js/plugins/chartjs.min.js') }}"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="{{ asset('admin/js/material-dashboard.min.js?v=3.0.0') }}"></script>
+    
+    @livewireScripts
 </body>
 </html>

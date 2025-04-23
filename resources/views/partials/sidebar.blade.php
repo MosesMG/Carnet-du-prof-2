@@ -34,27 +34,10 @@
                     <span class="nav-link-text ms-1 font-weight-bold">Universités</span>
                 </a>
             </li>
-            
-            <li class="nav-item">
-                <a href="" class="nav-link text-white mx-1">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fa fa-file-lines"></i>
-                    </div>
-                    <span class="nav-link-text ms-1 font-weight-bold">Diplômes</span>
-                </a>
-            </li>
 
             <li class="nav-item">
-                <a href="" class="nav-link text-white mx-1">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fa fa-chart-line"></i>
-                    </div>
-                    <span class="nav-link-text ms-1 font-weight-bold">Niveaux</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="" class="nav-link text-white mx-1">
+                <a href="{{ route('admin.users.index') }}" 
+                    class="nav-link text-white mx-1 {{ request()->is('admin/user*') ? 'active bg-gradient-info' : '' }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fa fa-users"></i>
                     </div>
@@ -63,7 +46,8 @@
             </li>
 
             <li class="nav-item">
-                <a href="" class="nav-link text-white mx-1">
+                <a href="{{ route('admin.profile') }}" 
+                    class="nav-link text-white mx-1 {{ request()->is('admin/profile*') ? 'active bg-gradient-info' : '' }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fa fa-user"></i>
                     </div>
@@ -75,5 +59,3 @@
     </div>
 
 </aside>
-
-<!-- Classe active : active bg-gradient-info -->
