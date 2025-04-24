@@ -9,7 +9,7 @@ import { Head } from '@inertiajs/vue3';
 
         <Head title="Accueil" />
 
-        <h1>Hello world</h1>
+        <h1>Accueil</h1>
 
 
     </DashboardLayout>

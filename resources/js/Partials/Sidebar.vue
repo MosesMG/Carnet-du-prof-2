@@ -51,7 +51,7 @@ function toggleMenu() {
             <div class="sidebar-content">
 
                 <ul class="nav nav-primary">
-                    <li class="nav-item <?= (isset($active) && $active == 'accueil') ? 'active' : '' ?>">
+                    <li class="nav-item" :class="{ 'active' : $page.url === '/accueil' }">
                         <Link :href="route('dashboard')">
                             <i class="fas fa-home"></i>
                             <p class="text-uppercase">Accueil</p>
@@ -65,7 +65,7 @@ function toggleMenu() {
                         <h4 class="text-section">Menu</h4>
                     </li>
 
-                    <li class="nav-item <?= (isset($active) && $active == 'calendrier') ? 'active' : '' ?>">
+                    <li class="nav-item">
                         <Link :href="route('calendrier')">
                             <i class="fas fa-calendar-alt"></i>
                             <p class="text-uppercase">Calendrier</p>
@@ -74,8 +74,8 @@ function toggleMenu() {
 
                     <!-- @if (!isset($mesUniv) || $mesUniv->count() == 0) -->
                     
-                        <li class="nav-item <?= (isset($active) && $active == 'universites') ? 'active' : '' ?>">
-                            <Link :href="route('dashboard')">
+                        <li class="nav-item" :class="{ 'active' : $page.url.startsWith('/universites') }">
+                            <Link :href="route('universites')">
                                 <i class="fas fa-school"></i>
                                 <p class="text-uppercase">Les universités</p>
                             </Link>
@@ -83,7 +83,7 @@ function toggleMenu() {
 
                     <!-- @else -->
 
-                        <li class="nav-item <?= (isset($active) && $active == 'universites') ? 'active' : '' ?>">
+                        <li class="nav-item" :class="{ 'active' : $page.url.startsWith('/universites') }">
                             <a href="#" @click="toggleMenu">
                                 <i class="fas fa-school"></i>
                                 <p class="text-uppercase mb-0">Mes universités</p>
@@ -94,7 +94,7 @@ function toggleMenu() {
                                 <div v-if="isOpen">
                                     <ul class="nav nav-collapse">
                                         <li>
-                                            <Link :href="route('dashboard')">
+                                            <Link :href="route('universites')">
                                                 <span class="sub-item">Liste des universités</span>
                                             </Link>
                                         </li>
