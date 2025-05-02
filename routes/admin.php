@@ -13,7 +13,7 @@ Route::prefix('/admin')->name('admin.')->group(function () {
 
     Route::middleware('guest:admin')->group(function () {
 
-        Route::get('/', [AuthController::class, 'login']);
+        Route::view('/', 'accuiel');
         Route::get('/login', [AuthController::class, 'login'])->name('login');
 
         Route::post('/login', [AuthController::class, 'doLogin']);
