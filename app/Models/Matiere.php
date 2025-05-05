@@ -11,8 +11,8 @@ class Matiere extends Model
 {
     protected $fillable = [
         'intitule', 'description',
-        'heure_debut', 'heure_fin',
-        'filiere_id'
+        'jour', 'heure_debut',
+        'heure_fin', 'filiere_id'
     ];
 
     public function filiere(): BelongsTo

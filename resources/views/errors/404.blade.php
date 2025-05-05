@@ -8,11 +8,11 @@
         <div>
             <img src="{{ asset('images/error-404.png') }}" alt="error" width="350">
         </div>
-        <div>
+        {{-- <div>
             <a href="{{ route('admin.accueil') }}" class="btn btn-info">
                 <i class="fa fa-arrow-left me-2"></i>
                 Revenir à l'accueil
             </a>
-        </div>
+        </div> --}}
     </div>
 @endsection

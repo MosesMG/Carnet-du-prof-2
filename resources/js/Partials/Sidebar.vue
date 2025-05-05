@@ -74,7 +74,7 @@ function toggleMenu() {
 
                     <!-- @if (!isset($mesUniv) || $mesUniv->count() == 0) -->
                     
-                        <li class="nav-item" :class="{ 'active' : $page.url.startsWith('/universites') }">
+                        <li class="nav-item" :class="{ 'active' : $page.url.startsWith('/universites') || $page.url.startsWith('/filiere') }">
                             <Link :href="route('universites')">
                                 <i class="fas fa-school"></i>
                                 <p class="text-uppercase">Les universités</p>
@@ -83,7 +83,7 @@ function toggleMenu() {
 
                     <!-- @else -->
 
-                        <li class="nav-item" :class="{ 'active' : $page.url.startsWith('/universites') }">
+                        <li class="nav-item" :class="{ 'active' : $page.url.startsWith('/universites') || $page.url.startsWith('/filiere') }">
                             <a href="#" @click="toggleMenu">
                                 <i class="fas fa-school"></i>
                                 <p class="text-uppercase mb-0">Mes universités</p>

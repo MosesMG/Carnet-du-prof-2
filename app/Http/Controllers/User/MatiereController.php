@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\User;
 
 use App\Models\Filiere;
+use App\Models\Matiere;
 use App\Models\Etudiant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Matiere;
+use App\Http\Requests\MatiereRequest;
 
 class MatiereController extends Controller
 {
@@ -26,10 +27,10 @@ class MatiereController extends Controller
         //     });
         // })->get();
         $matieres = Matiere::where('filiere_id', '=', $filiere->id)
-                        ->orderBy('jour')->get()->map(function ($matiere) {
-                            $matiere->jour_mat = Matiere::jourSemaine($matiere->jour);
-                            return $matiere;
-                        });
+                ->orderBy('jour')->get()->map(function ($matiere) {
+                    $matiere->jour_mat = Matiere::jourSemaine($matiere->jour);
+                    return $matiere;
+                });
         // dd($matieres);
 
         // $matieres = DB::select("
@@ -63,7 +64,7 @@ class MatiereController extends Controller
         //             ->where('user_id', '=', $user->id)
         //             ->first();
 
-        return inertia('Matieres', [
+        return inertia('Matieres/Index', [
             'filiere' => $filiere,
             'matieres' => $matieres,
             'etudiants' => $etudiants,
@@ -81,21 +82,16 @@ class MatiereController extends Controller
     //     ]);
     // }
 
-    // public function storeMatiere(string $filiere, MatiereRequest $request): RedirectResponse
-    // {
-    //     $filiere = Filiere::find($filiere);
+    public function storeMatiere(string $filiere, MatiereRequest $request)
+    {
+        $filiere = Filiere::find($filiere);
 
-    //     $credentials = $request->validated();
+        $credentials = $request->validated();
 
-    //     if ($credentials['description'] === null) {
-    //         $credentials['description'] = $credentials['intitule'];
-    //     }
+        Matiere::create($credentials);
 
-    //     Matiere::create($credentials);
-
-    //     return redirect()->route('mes.matieres', $filiere)
-    //                 ->with('success', 'Matière ajoutée avec succès !');
-    // }
+        return redirect()->route('mes.matieres', $filiere);
+    }
 
     // public function editMatiere(string $filiere, string $matiere): View
     // {
@@ -108,33 +104,27 @@ class MatiereController extends Controller
     //     ]);
     // }
 
-    // public function updateMatiere(string $filiere, string $matiere, MatiereRequest $request): RedirectResponse
-    // {
-    //     $filiere = Filiere::find($filiere);
-    //     $matiere = Matiere::find($matiere);
+    public function updateMatiere(string $filiere, string $matiere, MatiereRequest $request)
+    {
+        $filiere = Filiere::find($filiere);
+        $matiere = Matiere::find($matiere);
 
-    //     $credentials = $request->validated();
+        $credentials = $request->validated();
 
-    //     if ($credentials['description'] === null) {
-    //         $credentials['description'] = $credentials['intitule'];
-    //     }
+        $matiere->update($credentials);
 
-    //     $matiere->update($credentials);
+        return redirect()->route('mes.matieres', $filiere);
+    }
 
-    //     return redirect()->route('mes.matieres', $filiere)
-    //                 ->with('success', 'Matière modifiée avec succès !');
-    // }
+    public function deleteMatiere(string $filiere, string $matiere)
+    {
+        $filiere = Filiere::find($filiere);
+        $matiere = Matiere::find($matiere);
 
-    // public function deleteMatiere(string $filiere, string $matiere): RedirectResponse
-    // {
-    //     $filiere = Filiere::find($filiere);
-    //     $matiere = Matiere::find($matiere);
+        $matiere->delete();
 
-    //     $matiere->delete();
-
-    //     return redirect()->route('mes.matieres', $filiere, 302)
-    //                 ->with('success', 'Matière supprimée avec succès !');
-    // }
+        return redirect()->route('mes.matieres', $filiere);
+    }
 
 
     // // Maintenant les étudiants
