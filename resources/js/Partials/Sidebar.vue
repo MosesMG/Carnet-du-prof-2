@@ -24,7 +24,7 @@ function toggleMenu() {
         $mesUniv = collect($universites)->sortBy('nomUniv');
     @endphp -->
 
-    <div class="sidebar" data-background-color="white">
+    <div class="sidebar sidebar-style-2" data-background-color="dark">
         <div class="sidebar-logo">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="dark">

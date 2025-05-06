@@ -8,79 +8,35 @@ use App\Models\Etudiant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MatiereRequest;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class MatiereController extends Controller
 {
     public function mesMatieres(string $filiere)
     {
         $filiere = Filiere::with('matieres', 'niveau')->find($filiere);
-        
-        // $user = auth()->guard('web')->user();
-        // $matieres = $user->matieres()->with('filiere')
-        //                     ->where('id', '=', $filiere->id)->get();
-        // dd($matieres);
 
-        // $matieres = Matiere::whereHas('filiere', function ($query) use ($user) {
-        //     $query->whereHas('users', function ($q) use ($user) {
-        //         $q->where('users.id', $user->id);
-        //         $q->where('filieres.id', $filiere->id);
-        //     });
-        // })->get();
-        $matieres = Matiere::where('filiere_id', '=', $filiere->id)
-                ->orderBy('jour')->get()->map(function ($matiere) {
-                    $matiere->jour_mat = Matiere::jourSemaine($matiere->jour);
-                    return $matiere;
-                });
-        // dd($matieres);
+        $user = auth()->guard('web')->user();
 
-        // $matieres = DB::select("
-        //     SELECT DISTINCT *
-        //     FROM matieres M, filieres F, users U, filiere_user FU
-        //     WHERE F.id = M.filiere_id
-        //     AND F.id = FU.filiere_id
-        //     AND U.id = FU.user_id
-        //     AND FU.user_id = ?
-        //     AND F.id = ?
-        // ", [$user->id, $filiere->id]);
-
-        // dd($matieres);
-
-        // dd($user->filieres()->with('matieres')
-        //                 ->get()->pluck('matieres')
-        //                 ->flatten()->unique('id')->values()
-        // );
-
-        // $matieres = [];
-        // foreach ($filieres as $filiere) {
-        //     $matieres[] = $filiere->matieres;
-        // }
-        // dd($matieres);
+        $matieres = $user->matieres()->with('filiere')
+                        ->where('filiere_id', '=', $filiere->id)->get()
+                        ->map(function ($matiere) {
+                            $matiere->jour_mat = Matiere::jourSemaine($matiere->jour);
+                            return $matiere;
+        });
 
         $etudiants = Etudiant::where('filiere_id', '=', $filiere->id)
                             ->orderBy('nom')->get();
 
-        // $tauxhr = DB::table('filiere_user')
-        //             ->where('filiere_id', '=', $filiere->id)
-        //             ->where('user_id', '=', $user->id)
-        //             ->first();
+        $tauxHr = $matieres->first()->pivot->taux_hr ?? 0;
 
         return inertia('Matieres/Index', [
             'filiere' => $filiere,
             'matieres' => $matieres,
             'etudiants' => $etudiants,
-            // 'tauxhr' => json_decode(json_encode($tauxhr), true),
+            'tauxhr' => $tauxHr,
         ]);
     }
-
-    // public function ajoutMatiere(string $filiere): View
-    // {
-    //     $filiere = Filiere::find($filiere);
-
-    //     return view('user.matieres.form', [
-    //         'matiere' => new Matiere(),
-    //         'filiere' => $filiere,
-    //     ]);
-    // }
 
     public function storeMatiere(string $filiere, MatiereRequest $request)
     {
@@ -88,21 +44,11 @@ class MatiereController extends Controller
 
         $credentials = $request->validated();
 
-        Matiere::create($credentials);
+        $matiere = Matiere::create($credentials);
+        $matiere->users()->attach(auth()->guard('web')->id());
 
         return redirect()->route('mes.matieres', $filiere);
     }
-
-    // public function editMatiere(string $filiere, string $matiere): View
-    // {
-    //     $filiere = Filiere::find($filiere);
-    //     $matiere = Matiere::find($matiere);
-
-    //     return view('user.matieres.form', [
-    //         'matiere' => $matiere,
-    //         'filiere' => $filiere,
-    //     ]);
-    // }
 
     public function updateMatiere(string $filiere, string $matiere, MatiereRequest $request)
     {
@@ -128,37 +74,61 @@ class MatiereController extends Controller
 
 
     // // Maintenant les étudiants
-    // public function importEtudiants(string $filiere, Request $request): RedirectResponse
-    // {
-    //     $request->validate([
-    //         'etudiants' => 'required|file|mimes:xls,xlsx'
-    //     ]);
+    public function importEtudiants(string $filiere, Request $request)
+    {
+        $filiere = Filiere::find($filiere);
 
-    //     $fichier = $request->file('etudiants');
+        $request->validate([
+            'etudiants' => 'required|file|mimes:xls,xlsx'
+        ]);
 
-    //     $feuille = IOFactory::load($fichier);
-    //     $datas = $feuille->getActiveSheet()->toArray();
+        $fichier = $request->file('etudiants');
 
-    //     // Retirer l'en-tête du tableau
-    //     $etudiants = array_slice($datas, 1);
+        $feuille = IOFactory::load($fichier);
+        $datas = $feuille->getActiveSheet()->toArray();
 
-    //     foreach ($etudiants as $data) {
+        // Retirer l'en-tête du tableau
+        $etudiants = array_slice($datas, 1);
 
-    //         $date = DateTime::createFromFormat('d/m/Y', $data[3]);
+        foreach ($etudiants as $data) {
 
-    //         Etudiant::create([
-    //             'nomEtu' => $data[0],
-    //             'prenomEtu' => $data[1],
-    //             'sexeEtu' => $data[2],
-    //             'datenaisEtu' => $date->format('Y-m-d'),
-    //             'telEtu' => $data[4],
-    //             'emailEtu' => $data[5],
-    //             'filiere_id' => $filiere,
-    //         ]);
-    //     }
+            Etudiant::create([
+                'nom' => $data[0],
+                'prenom' => $data[1],
+                'sexe' => $data[2],
+                'telephone' => $data[3],
+                'email' => $data[4],
+                'filiere_id' => $filiere->id,
+            ]);
+        }
+        return back();
+    }
     
-    //     return back()->with('success', 'Liste importée avec succès !');
-    // }
+    // Le taux horaire
+    public function tauxHoraire(Request $request, string $filiere)
+    {
+        $filiere = Filiere::find($filiere);
+        
+        $validated = $request->validate([
+            'taux_hr' => 'required|integer|min:0',
+        ]);
+        $tauxhr = $validated['taux_hr'];
+
+        $user = auth()->guard('web')->user();
+
+        $matieresId = $user->matieres()->with('filiere')
+                        ->where('filiere_id', '=', $filiere->id)
+                        ->pluck('matieres.id')->toArray();
+        
+        $datas = [];
+        foreach ($matieresId as $id) {
+            $datas[$id] = ['taux_hr' => $tauxhr];
+        }
+
+        $user->matieres()->syncWithoutDetaching($datas);
+
+        return back();
+    }
 
     // // Les séances
     // public function lesSeances(string $matiere): View
@@ -289,46 +259,6 @@ class MatiereController extends Controller
     //     return redirect()->route('matiere.seance', $matiere)->with(
     //         'success', 'Séance terminée !',
     //     );
-    // }
-
-
-    // // Le taux horaire
-    // public function tauxHoraire(Request $request, string $filiere): RedirectResponse
-    // {
-    //     $filiere = Filiere::find($filiere);
-        
-    //     $validated = $request->validate([
-    //         'tauxHr' => 'required|integer|min:0',
-    //     ]);
-    //     $tauxhr = $validated['tauxHr'];
-
-    //     DB::table('filiere_user')
-    //         ->insert([
-    //             'filiere_id' => $filiere->id,
-    //             'user_id'=> Auth::guard('web')->user()->id,
-    //             'tauxHr' => $tauxhr,
-    //     ]);
-
-    //     return back()->with('success', 'Enregistré avec succès !');
-    // }
-
-    // public function modifTauxHoraire(Request $request, string $filiere): RedirectResponse
-    // {
-    //     $filiere = Filiere::find($filiere);
-        
-    //     $validated = $request->validate([
-    //         'tauxHr' => 'required|integer|min:0',
-    //     ]);
-    //     $tauxhr = $validated['tauxHr'];
-
-    //     DB::table('filiere_user')
-    //         ->where('filiere_id', '=', $filiere->id)
-    //         ->where('user_id', '=', Auth::guard('web')->user()->id)
-    //         ->update([
-    //             'tauxHr' => $tauxhr,
-    //     ]);
-
-    //     return back()->with('success', 'Modifié avec succès !');
     // }
 
     // // LES NOTES

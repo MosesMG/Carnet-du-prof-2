@@ -53,8 +53,8 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/filiere/{filiere}/matieres', 'importEtudiants')->name('import.etudiants');
 
-        Route::post('/filiere/{filiere}/tauxhr', 'tauxHoraire')->name('filiere.tauxhr');
-        Route::patch('/filiere/{filiere}/tauxhr', 'modifTauxHoraire')->name('filiere.modiftauxhr');
+        Route::put('/filiere/{filiere}/tauxhr', 'tauxHoraire')->name('filiere.tauxhr');
+        // Route::patch('/filiere/{filiere}/tauxhr', 'modifTauxHoraire')->name('filiere.modiftauxhr');
 
         Route::get('/matiere/{matiere}/seances', 'lesSeances')->name('matiere.seance');
         Route::post('/matiere/{matiere}/seances', 'startSeance')->name('seance.start');

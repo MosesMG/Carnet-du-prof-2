@@ -28,7 +28,7 @@ return new class extends Migration
         Schema::create('matiere_user', function (Blueprint $table) {
             $table->foreignIdFor(Matiere::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
-            $table->float('taux_hr');
+            $table->float('taux_hr')->nullable();
             $table->timestamps();
         });
     }
