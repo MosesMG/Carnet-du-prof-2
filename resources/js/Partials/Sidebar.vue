@@ -1,5 +1,5 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const isOpen = ref(false)
@@ -7,23 +7,10 @@ const isOpen = ref(false)
 function toggleMenu() {
     isOpen.value = !isOpen.value
 }
+const mesUniversites = usePage().props.mesUniversites;
 </script>
 
 <template>
-    <!-- @php
-        $user = auth()->guard('web')->user();
-        $filieres = $user->filieres()->with('site')->get();
-        
-        $universites = [];
-        foreach ($filieres as $filiere) {
-            if (!in_array($filiere->site->universite, $universites)) {
-                $universites[] = $filiere->site->universite;
-            }
-        }
-
-        $mesUniv = collect($universites)->sortBy('nomUniv');
-    @endphp -->
-
     <div class="sidebar sidebar-style-2" data-background-color="dark">
         <div class="sidebar-logo">
             <!-- Logo Header -->
@@ -53,8 +40,8 @@ function toggleMenu() {
                 <ul class="nav nav-primary">
                     <li class="nav-item" :class="{ 'active' : $page.url === '/accueil' }">
                         <Link :href="route('dashboard')">
-                            <i class="fas fa-home"></i>
-                            <p class="text-uppercase">Accueil</p>
+                            <i class="fas fa-home text-white"></i>
+                            <p class="text-uppercase text-white">Accueil</p>
                         </Link>
                     </li>
 
@@ -65,69 +52,66 @@ function toggleMenu() {
                         <h4 class="text-section">Menu</h4>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item text-white mb-3" 
+                        :class="{ 'active' : $page.url === '/calendrier' }">
                         <Link :href="route('calendrier')">
-                            <i class="fas fa-calendar-alt"></i>
-                            <p class="text-uppercase">Calendrier</p>
+                            <i class="fas fa-calendar-alt text-white"></i>
+                            <p class="text-uppercase text-white">Calendrier</p>
                         </Link>
                     </li>
 
-                    <!-- @if (!isset($mesUniv) || $mesUniv->count() == 0) -->
-                    
-                        <li class="nav-item" :class="{ 'active' : $page.url.startsWith('/universites') || $page.url.startsWith('/filiere') }">
-                            <Link :href="route('universites')">
-                                <i class="fas fa-school"></i>
-                                <p class="text-uppercase">Les universités</p>
-                            </Link>
-                        </li>
+                    <li class="nav-item mb-3" v-if="mesUniversites.length > 0" 
+                        :class="{ 'active' : $page.url.startsWith('/universite') || $page.url.startsWith('/filiere') }">
+                        <a href="#" @click="toggleMenu">
+                            <i class="fas fa-school text-white"></i>
+                            <p class="text-uppercase text-white mb-0">Mes universités</p>
+                            <span class="ms-auto caret" :class="{ 'rotate-180': isOpen }"></span>
+                        </a>
 
-                    <!-- @else -->
+                        <transition name="collapse">
+                            <div v-if="isOpen">
+                                <ul class="nav nav-collapse">
+                                    <li>
+                                        <Link :href="route('universites')">
+                                            <span class="sub-item text-white">Liste des universités</span>
+                                        </Link>
+                                    </li>
+                                    <li v-for="univ in mesUniversites" :key="univ.id">
+                                        <Link :href="route('sites.choix', univ)">
+                                            <span class="sub-item text-white">{{ univ.nom }}</span>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </div>         
+                        </transition>
+                    </li>
 
-                        <li class="nav-item" :class="{ 'active' : $page.url.startsWith('/universites') || $page.url.startsWith('/filiere') }">
-                            <a href="#" @click="toggleMenu">
-                                <i class="fas fa-school"></i>
-                                <p class="text-uppercase mb-0">Mes universités</p>
-                                <span class="ms-auto caret" :class="{ 'rotate-180': isOpen }"></span>
-                            </a>
+                    <li v-else class="nav-item mb-3" 
+                        :class="{ 'active' : $page.url.startsWith('/universite') || $page.url.startsWith('/filiere') }">
+                        <Link :href="route('universites')">
+                            <i class="fas fa-school text-white"></i>
+                            <p class="text-uppercase text-white">Les universités</p>
+                        </Link>
+                    </li>
 
-                            <transition name="collapse">
-                                <div v-if="isOpen">
-                                    <ul class="nav nav-collapse">
-                                        <li>
-                                            <Link :href="route('universites')">
-                                                <span class="sub-item">Liste des universités</span>
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link :href="route('dashboard')">
-                                                <span class="sub-item">HARVARD</span>
-                                            </Link>
-                                        </li>
-                                    </ul>
-                                </div>         
-                            </transition>
-                        </li>
-
-                    <!-- @endif -->
-
-                    <li class="nav-item <?= (isset($active) && $active == 'rappels') ? 'active' : '' ?>">
+                    <li class="nav-item mb-3">
                         <Link :href="route('dashboard')">
-                            <i class="fas fa-envelope"></i>
-                            <p class="text-uppercase">Notifications</p>
+                            <i class="fas fa-envelope text-white"></i>
+                            <p class="text-uppercase text-white">Notifications</p>
                         </Link>
                     </li>
 
-                    <li class="nav-item <?= (isset($active) && $active == 'donnees') ? 'active' : '' ?>">
+                    <li class="nav-item mb-3">
                         <Link :href="route('dashboard')">
-                            <i class="fas fa-chart-bar"></i>
-                            <p class="text-uppercase">Données</p>
+                            <i class="fas fa-chart-bar text-white"></i>
+                            <p class="text-uppercase text-white">Données</p>
                         </Link>
                     </li>
 
-                    <li class="nav-item <?= (isset($active) && $active == 'profil') ? 'active' : '' ?>">
+                    <li class="nav-item">
                         <Link :href="route('profile.edit')">
-                            <i class="fas fa-user-gear"></i>
-                            <p class="text-uppercase">Paramètres du profil</p>
+                            <i class="fas fa-user-gear text-white"></i>
+                            <p class="text-uppercase text-white">Paramètres du profil</p>
                         </Link>
                     </li>
                 </ul>
@@ -135,7 +119,6 @@ function toggleMenu() {
             </div>
         </div>
     </div>
-
 </template>
 
 <style scoped>

@@ -4,6 +4,7 @@ import { Head } from '@inertiajs/vue3';
 import ListeMatieres from './ListeMatieres.vue';
 import Etudiants from './Etudiants.vue';
 import AutresInfos from './AutresInfos.vue';
+import Breadcrumb from '@/Components/Breadcrumb.vue';
 
 const props = defineProps({
     filiere : Object,
@@ -11,6 +12,25 @@ const props = defineProps({
     tauxhr: Number,
     etudiants: Array,
 });
+
+const items = [
+    { name: 'Accueil', url: route('dashboard') },
+    { name: 'Universités', url: route('universites') },
+];
+if (props.filiere.site.universite.sites.length > 1) {
+    items.push(
+        { name: props.filiere.site.universite.nom, url: route('sites.choix', props.filiere.site.universite) },
+        { name: props.filiere.site.nom, url: route('mes.filieres', props.filiere.site) },
+    )
+}
+else {
+    items.push(
+        { name: props.filiere.site.universite.nom, url: route('sites.choix', props.filiere.site.universite) }
+    )
+}
+items.push(
+    { name: props.filiere.libelle }
+)
 </script>
 
 
@@ -19,6 +39,8 @@ const props = defineProps({
     <DashboardLayout>
 
         <Head title="Les matières" />
+
+        <Breadcrumb :items="items" />
 
         <ul class="nav nav-tabs mx-auto mb-4 gap-3" id="myTab" role="tablist" style="width: max-content;">
             <li class="nav-item" role="presentation">

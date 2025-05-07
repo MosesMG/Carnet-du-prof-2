@@ -15,7 +15,7 @@ class UniversiteController extends Controller
     {
         $universites = Universite::withCount('sites')->orderBy('nom')->get();
 
-        return inertia('Universites', [
+        return inertia('Home/Universites', [
             'universites' => $universites
         ]);
     }
@@ -29,13 +29,13 @@ class UniversiteController extends Controller
             $site = $sites->first();
             $filieres = Filiere::where('site_id', '=', $site->id)->orderBy('libelle')->get();
 
-            return inertia('Filieres', [
+            return inertia('Home/Filieres', [
                 'filieres' => $filieres,
                 'universite' => Universite::where('id', '=', $site->universite_id)->first(),
             ]);
         }
 
-        return inertia('Sites', [
+        return inertia('Home/Sites', [
             'sites' => $sites,
             'universite' => Universite::where('id', '=', $site)->first(),
         ]);
@@ -45,9 +45,10 @@ class UniversiteController extends Controller
     {
         $filieres = Filiere::where('site_id', '=', $site)->orderBy('libelle')->get();
 
-        return inertia('Filieres', [
+        return inertia('Home/Filieres', [
             'filieres' => $filieres,
             'site' => Site::find($site),
+            'universite' => Site::find($site)->universite,
         ]);
     }
 }

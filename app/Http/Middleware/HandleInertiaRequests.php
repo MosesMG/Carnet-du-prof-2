@@ -35,6 +35,12 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'appName' => config('app.name'),
+            'mesUniversites' => fn () => auth()->guard('web')->check() ?
+                                    auth()->guard('web')->user()->matieres()
+                                    ->with('filiere.site.universite')
+                                    ->get()->pluck('filiere.site.universite')
+                                    ->unique('id')->values()
+                                : [],
         ];
     }
 }

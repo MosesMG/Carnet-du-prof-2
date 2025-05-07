@@ -14,7 +14,7 @@ class MatiereController extends Controller
 {
     public function mesMatieres(string $filiere)
     {
-        $filiere = Filiere::with('matieres', 'niveau')->find($filiere);
+        $filiere = Filiere::with('matieres', 'niveau', 'site.universite.sites')->find($filiere);
 
         $user = auth()->guard('web')->user();
 
@@ -73,7 +73,7 @@ class MatiereController extends Controller
     }
 
 
-    // // Maintenant les étudiants
+    // Les étudiants
     public function importEtudiants(string $filiere, Request $request)
     {
         $filiere = Filiere::find($filiere);

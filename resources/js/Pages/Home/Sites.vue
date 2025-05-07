@@ -1,11 +1,18 @@
 <script setup>
+import Breadcrumb from '@/Components/Breadcrumb.vue';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
-defineProps({
+const props = defineProps({
     universite: Object,
     sites: Array,
 })
+
+const items = [
+    { name: 'Accueil', url: route('dashboard') },
+    { name: 'Universités', url: route('universites') },
+    { name: props.universite.nom },
+];
 </script>
 
 <template>
@@ -13,6 +20,8 @@ defineProps({
     <DashboardLayout>
 
         <Head title="Les sites" />
+
+        <Breadcrumb :items="items" />
 
         <h4 class="text-center my-4">Choisir un site de l'université "{{ universite.nom }}"</h4>
 

@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/universites/{site}', 'choixFiliere')->name('sites.choix');
         
-        Route::get('/{site}/filieres', 'mesFilieres')->name('mes.filieres');
+        Route::get('universite/{site}/filieres', 'mesFilieres')->name('mes.filieres');
     });
 
     Route::controller(MatiereController::class)->group(function () {

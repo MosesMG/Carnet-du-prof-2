@@ -12,7 +12,7 @@ defineProps({
 
 <template>
     <nav aria-label="breadcrumb">
-        <ol class="d-flex align-items-center gap-2 fw-medium text-black mb-2">
+        <ol class="d-flex align-items-center gap-2 fw-medium text-black mb-3">
             <i class="fas fa-home text-sm"></i>
             <li class="d-flex align-items-center" v-for="(item, index) in items" :key="index">
                 

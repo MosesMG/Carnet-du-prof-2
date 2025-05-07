@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\User;
 
 use Carbon\Carbon;
-use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -14,14 +13,32 @@ class HomeController extends Controller
         $today = Carbon::createFromDate(now()->year, now()->month, now()->day);
         $dayWeek = $today->toArray()['dayOfWeek'];
         $dayWeek = ($dayWeek == 0) ? 7 : $dayWeek;
-
-        $user = auth()->guard('web')->user();
-        // $matieres = $user->enseignements()->get();
-        // dd($matieres);
         
-        return Inertia::render('Home');
+        $user = auth()->guard('web')->user();
+        $aujMatieres = $user->matieres()->with('filiere.site.universite')
+                            ->where('jour', '=', $dayWeek)
+                            ->orderBy('heure_debut')->get();
+        
+        return inertia('Accueil', [
+            'matieres' => $aujMatieres,
+        ]);
     }
 
     public function calendrier()
-    {}
+    {
+        $user = auth()->guard('web')->user();
+        $matieres = $user->matieres()->with('filiere.site.universite')->orderBy('jour')->get();
+
+        return inertia('Calendrier/Semaine', [
+            'semaine' => [
+                1 => $matieres->where('jour', '=', 1),
+                2 => $matieres->where('jour', '=', 2),
+                3 => $matieres->where('jour', '=', 3),
+                4 => $matieres->where('jour', '=', 4),
+                5 => $matieres->where('jour', '=', 5),
+                6 => $matieres->where('jour', '=', 6),
+                7 => $matieres->where('jour', '=', 7),
+            ],
+        ]);
+    }
 }

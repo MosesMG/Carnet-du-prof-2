@@ -8,8 +8,8 @@ defineProps({
 });
 
 const items = [
-    {name: 'Accueil', url: route('dashboard')},
-    {name: 'Universités'}
+    { name: 'Accueil', url: route('dashboard') },
+    { name: 'Universités' }
 ]
 </script>
 
