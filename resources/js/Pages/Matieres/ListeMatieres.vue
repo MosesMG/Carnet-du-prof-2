@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
 import TextInput from '@/Components/TextInput.vue'
 import InputError from '@/Components/InputError.vue'
@@ -134,7 +134,11 @@ const confirmDelete = () => {
                 </thead>
                 <tbody>
                     <tr v-for="matiere in props.matieres" :key="matiere.id" class="text-center">
-                        <td>{{ matiere.intitule }}</td>
+                        <td>
+                            <Link :href="route('matiere.seance', matiere)" class="text-dark fw-medium text-decoration-underline">
+                                {{ matiere.intitule }}        
+                            </Link>
+                        </td>
                         <td>{{ matiere.jour_mat }}</td>
                         <td>{{ formatHeure(matiere.heure_debut) + ' - ' + formatHeure(matiere.heure_fin) }}</td>
                         <td>

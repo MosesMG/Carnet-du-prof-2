@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\MatiereController;
+use App\Http\Controllers\User\SeanceController;
 use App\Http\Controllers\User\UniversiteController;
 
 Route::get('/', function () {
@@ -43,10 +44,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/filiere/{filiere}/matieres', 'mesMatieres')->name('mes.matieres');
 
-        // Route::get('/filiere/{filiere}/matieres/ajouter', 'ajoutMatiere')->name('matieres.ajout');
         Route::post('/filiere/{filiere}/matieres/add', 'storeMatiere')->name('matieres.store');
 
-        // Route::get('/filiere/{filiere}/matieres/{matiere}/editer', 'editMatiere')->name('matieres.edit');
         Route::patch('/filiere/{filiere}/matieres/{matiere}/edit', 'updateMatiere')->name('matieres.update');
 
         Route::delete('/filiere/{filiere}/matieres/{matiere}/delete', 'deleteMatiere')->name('matieres.delete');
@@ -54,16 +53,21 @@ Route::middleware('auth')->group(function () {
         Route::post('/filiere/{filiere}/matieres', 'importEtudiants')->name('import.etudiants');
 
         Route::put('/filiere/{filiere}/tauxhr', 'tauxHoraire')->name('filiere.tauxhr');
-        // Route::patch('/filiere/{filiere}/tauxhr', 'modifTauxHoraire')->name('filiere.modiftauxhr');
+    });
+
+    Route::controller(SeanceController::class)->group(function () {
 
         Route::get('/matiere/{matiere}/seances', 'lesSeances')->name('matiere.seance');
+
         Route::post('/matiere/{matiere}/seances', 'startSeance')->name('seance.start');
-
+    
         Route::get('/matiere/{matiere}/seance/{seance}', 'showSeance')->name('seance.show');
+        
         Route::put('/matiere/{matiere}/seance/{seance}', 'stopSeance')->name('seance.stop');
-
+    
         Route::post('/matiere/{matiere}/notes', 'notEtudiants')->name('etudiant.notes');
     });
+
 });
 
 require __DIR__.'/auth.php';
