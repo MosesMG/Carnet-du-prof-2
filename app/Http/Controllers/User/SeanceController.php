@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use DateTime;
 use App\Models\Seance;
 use App\Models\Matiere;
 use App\Models\Etudiant;
@@ -13,7 +14,7 @@ class SeanceController extends Controller
     public function lesSeances(string $matiere)
     {
         $matiere = Matiere::with('seances', 'filiere.site.universite.sites')->find($matiere);
-        
+
         $noteUn = Etudiant::where('filiere_id', '=', $matiere->filiere->id)
                             ->orderBy('etudiants.nom')->get();
 
@@ -24,8 +25,7 @@ class SeanceController extends Controller
         $notes = ($noteDeux->count() === 0) ? $noteUn : $noteDeux;
 
         $seances = Seance::where('matiere_id', '=', $matiere->id)
-                        // ->where('etatSeance', '=', 1)
-                        ->orderBy('date', 'desc')->get();
+                        ->orderByDesc('date')->get();
 
         return inertia('Seances/Index', [
             'matiere' => $matiere,
@@ -33,95 +33,76 @@ class SeanceController extends Controller
             'seances' => $seances,
         ]);
     }
+    
+    public function showSeance(string $matiere, string $seance)
+    {
+        $matiere = Matiere::with('seances', 'filiere.site.universite.sites')->find($matiere);
+        $seance = Seance::find($seance);
+        $etudiants = Etudiant::where('filiere_id', '=', $matiere->filiere->id)
+                                ->orderBy('nom')->get();
 
-    // public function showSeance(string $matiere, string $seance): RedirectResponse|View
-    // {
-    //     $matiere = Matiere::with('seances', 'filiere')->find($matiere);
-    //     $seance = Seance::find($seance);
-    //     $etudiants = Etudiant::where('filiere_id', '=', $matiere->filiere->id)
-    //                             ->orderBy('nomEtu')->get();
+        // if($etudiants->count() == 0) {
+        //     return back()->with('success', "Importez d'abord la liste des étudiants.");
+        // }
 
-    //     if($etudiants->count() == 0) {
-    //         return back()->with('success', "Importez d'abord la liste des étudiants.");
-    //     }
-
-    //     $debut = new DateTime($seance->heureDeb);
-    //     $now = new DateTime('now');
+        // $debut = new DateTime($seance->heure_debut);
+        // $now = new DateTime('now');
         
-    //     if ($seance->heureFin == '00:00:00' || $seance->heureFin == '') {
-    //         $intervalle = $debut->diff($now);
-    //     }
-    //     else {
-    //         $fin = new DateTime($seance->heureFin);
-    //         $intervalle = $debut->diff($fin);
+        // if ($seance->heure_fin === null || $seance->heure_fin === '') {
+        //     $intervalle = $debut->diff($now);
+        // }
+        // else {
+        //     $fin = new DateTime($seance->heure_fin);
+        //     $intervalle = $debut->diff($fin);
 
-    //         $etudtsSeance = Seance::where('id', '=', $seance->id)->with('etudiants')->first();
-    //     }
+        //     $etudtsSeance = Seance::where('id', '=', $seance->id)->with('etudiants')->first();
+        // }
 
-    //     $hr = $intervalle->days * 24 + $intervalle->h;
-    //     $min = $intervalle->i;
+        // $hr = $intervalle->days * 24 + $intervalle->h;
+        // $min = $intervalle->i;
 
-    //     return view('user.seances.show', [
-    //         'matiere' => $matiere,
-    //         'seance' => $seance,
-    //         'etudiants' => $etudiants,
-    //         'temps' => [
-    //             'hr' => $hr,
-    //             'min' => $min,
-    //         ],
-    //         'presents' => $etudtsSeance ?? null,
-    //     ]);
-    // }
+        return inertia('Seances/DetailSeance', [
+            'matiere' => $matiere,
+            'seance' => $seance,
+            'etudiants' => $etudiants,
+            // 'temps' => [
+            //     'hr' => $hr,
+            //     'min' => $min,
+            // ],
+            'presents' => $etudtsSeance ?? null,
+        ]);
+    }
 
-    // public function startSeance(string $matiere): RedirectResponse
-    // {
-    //     $matiere = Matiere::find($matiere);
-    //     $etudiants = Etudiant::where('filiere_id', '=', $matiere->filiere->id)
-    //                             ->orderBy('nomEtu')->get();
+    public function startSeance(string $matiere)
+    {
+        $matiere = Matiere::find($matiere);
 
-    //     if($etudiants->count() == 0) {
-    //         return back()->with('success', "Importez d'abord la liste des étudiants.");
-    //     }
+        $seance = Seance::create([
+            'date' => now()->format('Y-m-d'),
+            'heure_debut' => now()->format('H:i'),
+            'matiere_id' => $matiere->id,
+        ]);
 
-    //     Seance::create([
-    //         'dateSeance' => now()->format('Y-m-d'),
-    //         'heureDeb' => now()->format('H:i'),
-    //         'heureFin' => '',
-    //         'etatSeance' => 0,
-    //         'detailSeance' => '',
-    //         'matiere_id' => $matiere->id,
-    //     ]);
+        return redirect()->route('seance.show', [
+            'matiere' => $matiere,
+            'seance' => $seance
+        ]);
+    }
 
-    //     $seance = Seance::where('matiere_id', '=', $matiere->id)
-    //                         ->orderBy('id', 'desc')->first();
+    public function stopSeance(Request $request, string $matiere, string $seance)
+    {
+        $matiere = Matiere::find($matiere);
+        $seance = Seance::find($seance);
 
-    //     Notification::create([
-    //         'message' => 'Cours de '.$matiere->intitule .' de '. 
-    //                     Carbon::parse($matiere->debMat)->format('H:i') .' à '. 
-    //                     Carbon::parse($matiere->finMat)->format('H:i'),
-    //         'seance_id' => $seance->id,
-    //     ]);
-
-    //     return redirect()->route('seance.show', [
-    //         'matiere' => $matiere,
-    //         'seance' => $seance
-    //     ])->with( 'success', "La séance a démarré !");
-    // }
-
-    // public function stopSeance(Request $request, string $matiere, string $seance): RedirectResponse
-    // {
-    //     $matiere = Matiere::find($matiere);
-    //     $seance = Seance::find($seance);
-
-    //     $resume = $request->detailSeance;
+        // dd($request->all());
+        $description = $request->description;
     //     $presence = $request->presence;
     //     $notes = $request->notes;
 
-    //     $seance->update([
-    //         'heureFin' => now()->format('H:i'),
-    //         'detailSeance' => $resume,
-    //         'etatSeance' => 1,
-    //     ]);
+        $seance->update([
+            'heure_fin' => now()->format('H:i'),
+            'description' => $description ?? null,
+        ]);
 
     //     $etudiants = Etudiant::where('filiere_id', '=', $matiere->filiere->id)
     //                         ->orderBy('nomEtu')->get();
@@ -136,10 +117,8 @@ class SeanceController extends Controller
     //         ]);
     //     }
 
-    //     return redirect()->route('matiere.seance', $matiere)->with(
-    //         'success', 'Séance terminée !',
-    //     );
-    // }
+        return redirect()->route('matiere.seance', $matiere);
+    }
 
     // // LES NOTES
     // public function notEtudiants(string $matiere, Request $request): RedirectResponse
