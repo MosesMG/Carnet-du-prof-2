@@ -64,6 +64,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/matiere/{matiere}/seance/{seance}', 'showSeance')->name('seance.show');
         
         Route::put('/matiere/{matiere}/seance/{seance}', 'stopSeance')->name('seance.stop');
+
+        Route::put('/matiere/{matiere}/seance/{seance}', 'infoSaveSeance')->name('seance.infos');
     
         Route::post('/matiere/{matiere}/notes', 'notEtudiants')->name('etudiant.notes');
     });

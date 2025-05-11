@@ -36,7 +36,7 @@ const tempsEcoule = ref('');
 let intervalle;
 onMounted(() => {
     const update = () => {
-        if (props.seance.heure_debut) {
+        if (props.seance.heure_debut && !props.seance.heure_fin) {
             tempsEcoule.value = differenceTemps(props.seance.heure_debut)
         }
     };
@@ -125,6 +125,15 @@ function diffHeure(h1, h2) {
     
                 <button type="submit" class="btn btn-danger text-uppercase my-4">Clôtuer la séance</button>
             </form>
+        </template>
+
+        <template v-if="props.seance && props.seance.heure_fin">
+            <div v-if="props.seance.description">
+                <div class="card w-50 mx-auto p-3">
+                    <span class="text-decoration-underline fs-5 font-medium">Résumé de la séance</span>
+                    {{ props.seance.description }}
+                </div>
+            </div>
         </template>
     </div>
 </template>

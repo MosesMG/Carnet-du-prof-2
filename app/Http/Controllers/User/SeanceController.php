@@ -37,39 +37,22 @@ class SeanceController extends Controller
     public function showSeance(string $matiere, string $seance)
     {
         $matiere = Matiere::with('seances', 'filiere.site.universite.sites')->find($matiere);
+    
         $seance = Seance::find($seance);
+
         $etudiants = Etudiant::where('filiere_id', '=', $matiere->filiere->id)
                                 ->orderBy('nom')->get();
 
-        // if($etudiants->count() == 0) {
-        //     return back()->with('success', "Importez d'abord la liste des étudiants.");
-        // }
-
-        // $debut = new DateTime($seance->heure_debut);
-        // $now = new DateTime('now');
-        
-        // if ($seance->heure_fin === null || $seance->heure_fin === '') {
-        //     $intervalle = $debut->diff($now);
-        // }
-        // else {
-        //     $fin = new DateTime($seance->heure_fin);
-        //     $intervalle = $debut->diff($fin);
-
-        //     $etudtsSeance = Seance::where('id', '=', $seance->id)->with('etudiants')->first();
-        // }
-
-        // $hr = $intervalle->days * 24 + $intervalle->h;
-        // $min = $intervalle->i;
+        $etudiantSeance = Seance::with(['etudiants' => function ($q) {
+            $q->select('etudiants.id', 'nom', 'prenom')
+              ->withPivot('presence', 'plus');
+        }])->find($seance);
 
         return inertia('Seances/DetailSeance', [
             'matiere' => $matiere,
             'seance' => $seance,
-            'etudiants' => $etudiants,
-            // 'temps' => [
-            //     'hr' => $hr,
-            //     'min' => $min,
-            // ],
-            'presents' => $etudtsSeance ?? null,
+            'etudiants' => $etudiants, 
+            'presences' => $etudiantSeance,
         ]);
     }
 
@@ -89,33 +72,43 @@ class SeanceController extends Controller
         ]);
     }
 
+    public function infoSaveSeance(Request $request, string $matiere, string $seance)
+    {
+        $matiere = Matiere::find($matiere);
+        $seance = Seance::find($seance);
+
+        $validated = $request->validate([
+            'participations' => 'required|array',
+            'participations.*.etudiant_id' => 'required|exists:etudiants,id',
+            'participations.*.presence' => 'required|boolean',
+            'participations.*.plus' => 'nullable|numeric',
+        ]);
+
+        $data = [];
+
+        foreach ($validated['participations'] as $item) {
+            $data[$item['etudiant_id']] = [
+                'presence' => $item['presence'],
+                'plus' => $item['plus'],
+            ];
+        }
+
+        $seance->etudiants()->syncWithoutDetaching($data);
+
+        return back();
+    }
+
     public function stopSeance(Request $request, string $matiere, string $seance)
     {
         $matiere = Matiere::find($matiere);
         $seance = Seance::find($seance);
 
-        // dd($request->all());
         $description = $request->description;
-    //     $presence = $request->presence;
-    //     $notes = $request->notes;
 
         $seance->update([
             'heure_fin' => now()->format('H:i'),
-            'description' => $description ?? null,
+            'description' => $description,
         ]);
-
-    //     $etudiants = Etudiant::where('filiere_id', '=', $matiere->filiere->id)
-    //                         ->orderBy('nomEtu')->get();
-
-    //     foreach ($etudiants as $etudt) {
-
-    //         DB::table('etudiant_seance')->insert([
-    //             'etudiant_id' => $etudt->id,
-    //             'seance_id' => $seance->id,
-    //             'presence' => in_array($etudt->id, $presence) ? 1 : 0,
-    //             'plus' => $notes[$etudt->id],
-    //         ]);
-    //     }
 
         return redirect()->route('matiere.seance', $matiere);
     }

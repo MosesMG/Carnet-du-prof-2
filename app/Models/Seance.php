@@ -22,7 +22,6 @@ class Seance extends Model
     public function etudiants(): BelongsToMany
     {
         return $this->belongsToMany(Etudiant::class)
-                    ->withPivot(['presence', 'plus'])
-                    ->withTimestamps();
+                    ->withPivot(['presence', 'plus']);
     }
 }

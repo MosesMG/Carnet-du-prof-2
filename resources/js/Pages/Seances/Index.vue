@@ -3,7 +3,6 @@ import Breadcrumb from '@/Components/Breadcrumb.vue';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import Presence from './Includes/Presence.vue';
 
 const props = defineProps({
     matiere: Object,

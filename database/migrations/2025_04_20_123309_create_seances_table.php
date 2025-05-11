@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreignIdFor(Etudiant::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Seance::class)->constrained()->cascadeOnDelete();
             $table->primary(['etudiant_id', 'seance_id']);
-            $table->boolean('seance')->default(false);
+            $table->boolean('presence')->default(false);
             $table->integer('plus')->default(0);
         });
     }
