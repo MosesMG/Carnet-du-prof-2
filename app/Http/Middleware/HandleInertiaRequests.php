@@ -29,18 +29,29 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = auth()->guard('web')->user();
+        if ($user) {
+            $matieres = $user->matieres()->pluck('matieres.id');
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
             'appName' => config('app.name'),
+
             'mesUniversites' => fn () => auth()->guard('web')->check() ?
-                                    auth()->guard('web')->user()->matieres()
-                                    ->with('filiere.site.universite')
+                                    $user->matieres()->with('filiere.site.universite')
                                     ->get()->pluck('filiere.site.universite')
                                     ->unique('id')->values()
                                 : [],
+            
+            'rappels' => fn () => auth()->guard('web')->check() ?
+                                    \App\Models\Rappel::whereHas('seance.matiere', 
+                function($query) use ($matieres) {
+                            $query->whereIn('id', $matieres);
+            })->get() : []
         ];
     }
 }

@@ -94,21 +94,21 @@ const mesUniversites = usePage().props.mesUniversites;
                         </Link>
                     </li>
 
-                    <li class="nav-item mb-3">
-                        <Link :href="route('dashboard')">
+                    <li class="nav-item mb-3" :class="{ 'active': $page.url === '/rappels' }">
+                        <Link :href="route('les.rappels')">
                             <i class="fas fa-envelope text-white"></i>
-                            <p class="text-uppercase text-white">Notifications</p>
+                            <p class="text-uppercase text-white">Rappels</p>
                         </Link>
                     </li>
 
-                    <li class="nav-item mb-3">
-                        <Link :href="route('dashboard')">
+                    <li class="nav-item mb-3" :class="{ 'active' : $page.url === '/donnees' }">
+                        <Link :href="route('les.donnees')">
                             <i class="fas fa-chart-bar text-white"></i>
                             <p class="text-uppercase text-white">Données</p>
                         </Link>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item" :class="{ 'active' : $page.url === '/profile' }">
                         <Link :href="route('profile.edit')">
                             <i class="fas fa-user-gear text-white"></i>
                             <p class="text-uppercase text-white">Paramètres du profil</p>

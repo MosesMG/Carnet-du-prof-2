@@ -20,7 +20,6 @@ function differenceTemps(heure) {
 
     let diffMs = now - target;
 
-    // Si la date est dans le futur (ex : target = 23h, now = 01h), on suppose qu'on compare à hier
     if (diffMs < 0) {
         diffMs += 24 * 60 * 60 * 1000;
     }
@@ -51,7 +50,7 @@ const form = useForm({
     description: ''
 });
 const closeSeance = () => {
-    form.put(route('seance.stop', {
+    form.patch(route('seance.stop', {
         matiere: props.matiere,
         seance: props.seance
     }));
@@ -63,11 +62,6 @@ function diffHeure(h1, h2) {
 
     const [h1Hour, h1Min, h1Sec] = h1.split(':').map(Number);
     const [h2Hour, h2Min, h2Sec] = h2.split(':').map(Number);
-
-    if ([h1Hour, h1Min, h2Hour, h2Min].some(isNaN)) {
-        console.error("Heures invalides :", h1, h2);
-        return "Heures invalides";
-    }
 
     const date1 = new Date(0, 0, 0, h1Hour, h1Min, h1Sec || 0);
     const date2 = new Date(0, 0, 0, h2Hour, h2Min, h2Sec || 0);
@@ -130,7 +124,7 @@ function diffHeure(h1, h2) {
         <template v-if="props.seance && props.seance.heure_fin">
             <div v-if="props.seance.description">
                 <div class="card w-50 mx-auto p-3">
-                    <span class="text-decoration-underline fs-5 font-medium">Résumé de la séance</span>
+                    <span class="text-decoration-underline fs-5 font-medium mb-3">Résumé de la séance</span>
                     {{ props.seance.description }}
                 </div>
             </div>

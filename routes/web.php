@@ -1,26 +1,12 @@
 <?php
 
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\DataNotifController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\MatiereController;
 use App\Http\Controllers\User\SeanceController;
 use App\Http\Controllers\User\UniversiteController;
-
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -46,9 +32,11 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/filiere/{filiere}/matieres/add', 'storeMatiere')->name('matieres.store');
 
-        Route::patch('/filiere/{filiere}/matieres/{matiere}/edit', 'updateMatiere')->name('matieres.update');
+        Route::patch('/filiere/{filiere}/matieres/{matiere}/edit', 'updateMatiere')
+                ->name('matieres.update');
 
-        Route::delete('/filiere/{filiere}/matieres/{matiere}/delete', 'deleteMatiere')->name('matieres.delete');
+        Route::delete('/filiere/{filiere}/matieres/{matiere}/delete', 'deleteMatiere')
+                ->name('matieres.delete');
 
         Route::post('/filiere/{filiere}/matieres', 'importEtudiants')->name('import.etudiants');
 
@@ -63,13 +51,23 @@ Route::middleware('auth')->group(function () {
     
         Route::get('/matiere/{matiere}/seance/{seance}', 'showSeance')->name('seance.show');
         
-        Route::put('/matiere/{matiere}/seance/{seance}', 'stopSeance')->name('seance.stop');
+        Route::patch('/matiere/{matiere}/seance/{seance}', 'stopSeance')->name('seance.stop');
 
         Route::put('/matiere/{matiere}/seance/{seance}', 'infoSaveSeance')->name('seance.infos');
     
-        Route::post('/matiere/{matiere}/notes', 'notEtudiants')->name('etudiant.notes');
+        Route::put('/matiere/{matiere}/notes', 'notEtudiants')->name('etudiant.notes');
     });
 
+    Route::controller(DataNotifController::class)->group(function () {
+
+        Route::get('/rappels', 'lesRappels')->name('les.rappels');
+
+        Route::delete('/rappel/{rappel}', 'deleteRappel')->name('rappel.delete');
+
+        Route::delete('/rappels/delete', 'deleteAllRappels')->name('all.rappel.delete');
+
+        Route::get('/donnees', 'index')->name('les.donnees');
+    });
 });
 
 require __DIR__.'/auth.php';

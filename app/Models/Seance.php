@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Seance extends Model
 {
@@ -23,5 +24,10 @@ class Seance extends Model
     {
         return $this->belongsToMany(Etudiant::class)
                     ->withPivot(['presence', 'plus']);
+    }
+
+    public function rappels(): HasMany
+    {
+        return $this->hasMany(Rappel::class);
     }
 }

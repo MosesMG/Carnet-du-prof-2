@@ -19,13 +19,15 @@ class GoolgeController extends Controller
     {
         try {
             $googleUser = Socialite::driver('google')->user();
+
+            session()->put('avatar', $googleUser->getAvatar());
+
             $user = User::firstOrCreate(
                 ['email' => $googleUser->getEmail()],
                 [
                     'name' => $googleUser->getName(),
                     'social_id' => $googleUser->getId(),
                     'password' => bcrypt(uniqid()),
-                    session()->put('avatar', $googleUser->getAvatar()),
                 ]
             );
 

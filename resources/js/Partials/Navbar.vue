@@ -1,5 +1,5 @@
 <script setup>
-import { Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 
 const today = new Date();
 const options = {
@@ -13,33 +13,12 @@ const laDate = today.toLocaleDateString('fr-FR', options);
 const form = useForm({});
 const submit = () => {
     form.post(route('logout'));
-} 
+}
+
+const rappels = usePage().props.rappels;
 </script>
 
 <template>
-    <!-- @php
-        $user = auth()->guard('web')->user();
-        $filieres = $user->filieres()->with('matieres')->get();
-
-        $matieres = [];
-        foreach ($filieres as $filiere) {
-            $matieres[] = $filiere->matieres->first();
-        }
-
-        $seances = [];
-        foreach ($matieres as $matiere) {
-            $seances[] = $matiere->seances;
-        }
-        $lesSeances = collect($seances)->collapse();
-
-        $notifications = [];
-        foreach ($lesSeances as $seance) {
-            $notifications[] = $seance->notifications;
-        }
-
-        $totalNotifs = count(collect($notifications)->collapse()->filter());
-    @endphp -->
-
     <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
         <div class="container-fluid">
 
@@ -51,11 +30,12 @@ const submit = () => {
 
             <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
                 <li class="nav-item topbar-icon dropdown hidden-caret">
-                    <Link class="nav-link" :href="route('dashboard')" title="Notifications">
+                    <Link class="nav-link" :href="route('les.rappels')" title="Notifications">
                         <i class="fa fa-bell"></i>
-                        <!-- @if ($totalNotifs > 0)
-                            <span class="notification bg-success-gradient fw-bold">{{ $totalNotifs }}</span>
-                        @endif -->
+                        <span v-if="rappels.length > 0"
+                            class="notification bg-warning-gradient fw-bolder">
+                            {{ rappels.length }}
+                        </span>
                     </Link>
                 </li>
 

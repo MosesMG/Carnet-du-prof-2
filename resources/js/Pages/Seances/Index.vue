@@ -2,14 +2,14 @@
 import Breadcrumb from '@/Components/Breadcrumb.vue';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import NotesEtudiants from './NotesEtudiants.vue';
 
 const props = defineProps({
     matiere: Object,
     seances: Array,
     notes: Array,
 });
-// console.log(props.notes)
+const derniereSeance = props.seances[props.seances.length - 1];
 
 const items = [
     { name: 'Accueil', url: route('dashboard') },
@@ -57,7 +57,6 @@ function getTodayAsNumber() {
     return jsDay === 0 ? 7 : jsDay;
 }
 const today = getTodayAsNumber();
-// console.log(today, props.matiere.jour);
 
 function formatHeure(heure) {
     const [h, m] = heure.split(':');
@@ -70,9 +69,10 @@ function startSeance() {
 }
 
 function dateToFr(date) {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
+    const d = date instanceof Date ? date : new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
     return `${day}/${month}/${year}`;
 }
 
@@ -82,11 +82,6 @@ function diffHeure(h1, h2) {
 
     const [h1Hour, h1Min, h1Sec] = h1.split(':').map(Number);
     const [h2Hour, h2Min, h2Sec] = h2.split(':').map(Number);
-
-    if ([h1Hour, h1Min, h2Hour, h2Min].some(isNaN)) {
-        console.error("Heures invalides :", h1, h2);
-        return "Heures invalides";
-    }
 
     const date1 = new Date(0, 0, 0, h1Hour, h1Min, h1Sec || 0);
     const date2 = new Date(0, 0, 0, h2Hour, h2Min, h2Sec || 0);
@@ -140,67 +135,35 @@ function diffHeure(h1, h2) {
                         Veuillez d'abord importer la liste des étudiants.
                     </p>
 
-                    <form @submit.prevent="startSeance">
-                        <button type="submit" class="btn btn-secondary text-uppercase fs-5" 
-                            :disabled="props.notes.length === 0 || today !== props.matiere.jour">
-                            Débuter la séance
-                        </button>
-                    </form>
+                    <template v-if="derniereSeance && !derniereSeance.heure_fin">
+                        <p class="text-danger fs-5">Une séance est en cours.</p>
+                        <Link class="btn btn-label-primary py-2"
+                            :href="route('seance.show', {
+                                matiere: props.matiere, seance: derniereSeance
+                            })"     
+                        >
+                            Aller à la séance
+                            <i class="fa fa-arrow-right ms-2"></i>
+                        </Link>
+                    </template>
+
+                    <template v-else>
+                        <form @submit.prevent="startSeance">
+                            <button type="submit" class="btn btn-secondary text-uppercase fs-5" 
+                                :disabled="props.notes.length === 0 || today !== props.matiere.jour ||
+                                (derniereSeance && !derniereSeance.heure_fin)">
+                                Débuter la séance
+                            </button>
+                        </form>
+                    </template>
+
                 </div>
             </div>
 
             <!-- Notes -->
             <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
 
-                <form>
-
-                    <table class="table table-striped mx-auto" style="width: 900px">
-                        <thead>
-                            <tr class="text-decoration-underline">
-                                <th>Étudiants</th>
-                                <th class="text-center">Devoir</th>
-                                <th class="text-center">Partiel</th>
-                                <th class="text-center">Autre note</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template v-if="props.notes.length === 0">
-                                <tr>
-                                    <td colspan="4">
-                                        <h5 class="text-center text-danger-emphasis">
-                                            Veuillez d'abord importer la liste des étudiants.
-                                        </h5>
-                                    </td>
-                                </tr>
-                            </template>
-
-                            <template v-else>
-                                <tr v-for="etudt in props.notes" :key="etudt.id">
-                                    <td style="font-size: 15px;">{{ etudt.nom + ' ' + etudt.prenom }}</td>
-                                    <td>
-                                        <input type="number" class="form-control mx-auto" min="0" max="20"
-                                            style="width: 100px;">
-                                    </td>
-                                    <td>
-                                        <input type="number" class="form-control mx-auto" min="0" max="20"
-                                            style="width: 100px;">
-                                    </td>
-                                    <td>
-                                        <input type="number" class="form-control mx-auto" min="0" max="20"
-                                            style="width: 100px;">
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-
-                    <div v-if="props.notes.length > 0" class="my-4 d-flex justify-content-center">
-                        <button type="submit" class="btn btn-secondary w-25">
-                            <i class="fas fa-save"></i>
-                            Enregistrer
-                        </button>
-                    </div>
-                </form>
+                <NotesEtudiants :notes="props.notes" :matiere="props.matiere" />
 
             </div>
 
@@ -222,9 +185,18 @@ function diffHeure(h1, h2) {
                             </td>
                         </tr>
                         <tr v-else v-for="seance in props.seances" :key="seance.id">
-                            <td>{{ dateToFr(new Date (seance.date)) }}</td>
-                            <td>{{ formatHeure(seance.heure_debut) + ' - ' + formatHeure(seance.heure_fin) }}</td>
-                            <td>{{ diffHeure(seance.heure_fin, seance.heure_debut) }}</td>
+                            <td>{{ dateToFr(seance.date) }}</td>
+                            <template v-if="!seance.heure_fin">
+                                <td colspan="2" class="text-danger text-center font-medium">
+                                    Séance en cours...
+                                </td>
+                            </template>
+                            <template v-else>
+                                <td>
+                                    {{ formatHeure(seance.heure_debut) + ' - ' + formatHeure(seance.heure_fin) }}
+                                </td>
+                                <td>{{ diffHeure(seance.heure_fin, seance.heure_debut) }}</td>
+                            </template>
                             <td>
                                 <Link :href="route('seance.show', {
                                     matiere: props.matiere, seance: seance
@@ -237,7 +209,6 @@ function diffHeure(h1, h2) {
                     </tbody>
                 </table>
             </div>
-
         </div>
 
     </DashboardLayout>

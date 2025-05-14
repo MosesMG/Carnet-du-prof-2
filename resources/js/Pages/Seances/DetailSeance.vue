@@ -1,8 +1,7 @@
 <script setup>
 import Breadcrumb from '@/Components/Breadcrumb.vue';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { Head } from '@inertiajs/vue3';
 import TimeSeance from './Includes/TimeSeance.vue';
 import PresenceNote from './Includes/PresenceNote.vue';
 import InfoSeance from './Includes/InfoSeance.vue';
@@ -121,4 +120,3 @@ function dateToFr(date) {
 
     </DashboardLayout>
 </template>
-

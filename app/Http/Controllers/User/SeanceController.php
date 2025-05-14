@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\User;
 
-use DateTime;
 use App\Models\Seance;
 use App\Models\Matiere;
 use App\Models\Etudiant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Note;
 
 class SeanceController extends Controller
 {
@@ -15,14 +15,22 @@ class SeanceController extends Controller
     {
         $matiere = Matiere::with('seances', 'filiere.site.universite.sites')->find($matiere);
 
-        $noteUn = Etudiant::where('filiere_id', '=', $matiere->filiere->id)
-                            ->orderBy('etudiants.nom')->get();
+        $matiereId = $matiere->id;
+        $etudiants = Etudiant::where('filiere_id', '=', $matiere->filiere->id)
+                            ->orderBy('nom')->get();
 
-        $noteDeux = Etudiant::where('matiere_id', '=', $matiere->id)
-                            ->join('notes', 'etudiants.id', '=', 'notes.etudiant_id')
-                            ->select()->orderBy('etudiants.nom')->get();
-
-        $notes = ($noteDeux->count() === 0) ? $noteUn : $noteDeux;
+        $notes = $etudiants->map(function ($etudiant) use ($matiereId) {
+            $note = $etudiant->notes()->where('matiere_id', $matiereId)->first();
+            return [
+                'etudiant_id' => $etudiant->id,
+                'matiere_id' => $matiereId,
+                'nom' => $etudiant->nom,
+                'prenom' => $etudiant->prenom,
+                'devoir' => $note->devoir ?? null,
+                'partiel' => $note->partiel ?? null,
+                'autre' => $note->autre ?? null,
+            ];
+        });
 
         $seances = Seance::where('matiere_id', '=', $matiere->id)
                         ->orderByDesc('date')->get();
@@ -103,86 +111,42 @@ class SeanceController extends Controller
         $matiere = Matiere::find($matiere);
         $seance = Seance::find($seance);
 
-        $description = $request->description;
-
         $seance->update([
             'heure_fin' => now()->format('H:i'),
-            'description' => $description,
+            'description' => $request->description,
         ]);
 
         return redirect()->route('matiere.seance', $matiere);
     }
 
-    // // LES NOTES
-    // public function notEtudiants(string $matiere, Request $request): RedirectResponse
-    // {
-    //     $matiere = Matiere::with('filiere')->find($matiere);
-    //     $etudiants = Etudiant::where('filiere_id', '=', $matiere->filiere->id)
-    //                             ->orderBy('nomEtu')->with('notes')->get();
-        
-    //     if($etudiants->count() == 0) {
-    //         return back()->with('success', "Importez d'abord la liste des étudiants.");
-    //     }       
+    // LES NOTES
+    public function notEtudiants(string $matiere, Request $request)
+    {
+        $matiere = Matiere::with('filiere')->find($matiere);
 
-    //     $lesDevoirs = $request['devNote'];
-    //     $lesPartiels = $request['partielNote'];
-    //     $lesAutres = $request['autreNote'];
+        $validated = $request->validate([
+            'notes' => 'required|array',
+            'notes.*.devoir' => 'nullable|numeric|min:0|max:20',
+            'notes.*.partiel' => 'nullable|numeric|min:0|max:20',
+            'notes.*.autre' => 'nullable|numeric|min:0|max:20',
+            'notes.*.etudiant_id' => 'required|exists:etudiants,id',
+            'notes.*.matiere_id' => 'required|exists:matieres,id',
+        ]);
 
-    //     $lesNotes = array_merge($lesDevoirs, $lesPartiels, $lesAutres);
+        foreach ($validated['notes'] as $note) {
+            Note::updateOrCreate(
+                [
+                    'etudiant_id' => $note['etudiant_id'],
+                    'matiere_id' => $note['matiere_id'],
+                ],
+                [
+                    'devoir' => $note['devoir'],
+                    'partiel' => $note['partiel'],
+                    'autre' => $note['autre'],
+                ]
+            );
+        }
 
-    //     $stockNote = 0;
-    //     foreach ($lesNotes as $key => $note) {
-    //         if((int)$note !== 0) {
-    //             $stockNote++;
-    //         }
-    //     }
-
-    //     if ($stockNote === 0) {
-            
-    //         foreach ($etudiants as $etudiant) {
-    //             Note::create([
-    //                 'devNote' => $lesDevoirs[$etudiant->id],
-    //                 'partielNote' => $lesPartiels[$etudiant->id],
-    //                 'autreNote' => $lesAutres[$etudiant->id],
-    //                 'etudiant_id' => $etudiant->id,
-    //                 'matiere_id' => $matiere->id,
-    //             ]);
-    //         }
-    //     }
-    //     else {
-
-    //         $notes = Note::where('matiere_id', '=', $matiere->id)->with('etudiant')->get();
-
-    //         if ($notes->count() === 0) {
-
-    //             foreach ($etudiants as $etudiant) {
-    //                 Note::create([
-    //                     'devNote' => $lesDevoirs[$etudiant->id],
-    //                     'partielNote' => $lesPartiels[$etudiant->id],
-    //                     'autreNote' => $lesAutres[$etudiant->id],
-    //                     'etudiant_id' => $etudiant->id,
-    //                     'matiere_id' => $matiere->id,
-    //                 ]);
-    //             }
-    //         }
-    //         else {
-
-    //             $j = 1;
-    //             foreach ($notes as $note) {
-    //                 Note::where('matiere_id', '=', $matiere->id)
-    //                     ->where('etudiant_id', '=', $note->etudiant->id)
-    //                     ->update([
-    //                         'devNote' => $lesDevoirs[$j],
-    //                         'partielNote' => $lesPartiels[$j],
-    //                         'autreNote' => $lesAutres[$j],
-    //                 ]);
-    //                 $j++;
-    //             }
-    //         }
-    //     }
-
-    //     return redirect()->route('matiere.seance', $matiere)->with(
-    //         'success', "Notes enregistrées avec succès !"
-    //     );
-    // }
+        return redirect()->route('matiere.seance', $matiere);
+    }
 }
