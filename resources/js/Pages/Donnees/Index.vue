@@ -45,7 +45,6 @@ const ceMois = new Date().toLocaleString('fr-FR', { month: 'long', year: 'numeri
         </ul>
 
         <div class="tab-content" id="myTabContent">
-
             <div class="tab-pane fade show active py-3" id="one-tab-pane" role="tabpanel" 
                 aria-labelledby="home-tab" tabindex="0">
 
@@ -59,7 +58,6 @@ const ceMois = new Date().toLocaleString('fr-FR', { month: 'long', year: 'numeri
                 <MoisPasses :passesMois="props.passesMois" />
 
             </div>
-
         </div>
 
     </DashboardLayout>
