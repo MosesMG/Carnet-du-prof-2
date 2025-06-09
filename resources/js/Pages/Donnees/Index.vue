@@ -21,7 +21,6 @@ const ceMois = new Date().toLocaleString('fr-FR', { month: 'long', year: 'numeri
 
 <template>
     <DashboardLayout>
-
         <Head title="Les données" />
 
         <Breadcrumb :items="items" />
@@ -47,21 +46,21 @@ const ceMois = new Date().toLocaleString('fr-FR', { month: 'long', year: 'numeri
 
         <div class="tab-content" id="myTabContent">
 
-                <div class="tab-pane fade show active py-3" id="one-tab-pane" role="tabpanel" 
-                    aria-labelledby="home-tab" tabindex="0">
-    
-                    <MoisActuel :actuelMois="props.actuelMois" />
-    
-                </div>
-    
-                <div class="tab-pane fade py-3" id="two-tab-pane" role="tabpanel" 
-                    aria-labelledby="profile-tab" tabindex="0">
-    
-                    <MoisPasses :passesMois="props.passesMois" />
-    
-                </div>
-    
+            <div class="tab-pane fade show active py-3" id="one-tab-pane" role="tabpanel" 
+                aria-labelledby="home-tab" tabindex="0">
+
+                <MoisActuel :actuelMois="props.actuelMois" />
+
             </div>
+
+            <div class="tab-pane fade py-3" id="two-tab-pane" role="tabpanel" 
+                aria-labelledby="profile-tab" tabindex="0">
+
+                <MoisPasses :passesMois="props.passesMois" />
+
+            </div>
+
+        </div>
 
     </DashboardLayout>
 </template>

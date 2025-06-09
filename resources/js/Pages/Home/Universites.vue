@@ -2,9 +2,20 @@
 import Breadcrumb from '@/Components/Breadcrumb.vue';
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
-defineProps({
+const props = defineProps({
     universites: Array
+});
+
+const search = ref('');
+
+const univFiltered = computed(() => {
+    if (!search.value) return props.universites;
+
+    return props.universites.filter(univ => 
+        univ.nom.toLowerCase().includes(search.value.toLocaleLowerCase())
+    );
 });
 
 const items = [
@@ -14,7 +25,6 @@ const items = [
 </script>
 
 <template>
-
     <DashboardLayout>
 
         <Head title="Liste des universités" />
@@ -23,7 +33,16 @@ const items = [
 
         <h3 class="my-2 text-center">Liste des universités</h3>
 
-        <div class="row justify-content-center">
+        <div class="mt-4 mb-3 row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="input-group">
+                    <label class="input-group-text">Rechercher par le nom</label>
+                    <input type="text" class="form-control" v-model="search">
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center table-responsive">
             <div class="col-sm-12 col-md-8">
                 <table id="" class="display table table-striped dataTable" role="grid"
                     aria-describedby="basic-datatables_info">
@@ -36,7 +55,7 @@ const items = [
                         </tr>
                     </thead>
                     <tbody>
-                        <tr role="row" v-for="universite in universites" :key="universite.id">
+                        <tr role="row" v-for="universite in univFiltered" :key="universite.id">
                             <td class="fw-semibold">{{ universite.nom }}</td>
                             <td>{{ universite.telephone }}</td>
                             <td>
@@ -52,5 +71,4 @@ const items = [
         </div>
 
     </DashboardLayout>
-
 </template>

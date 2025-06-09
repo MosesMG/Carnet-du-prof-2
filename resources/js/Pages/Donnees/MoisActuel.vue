@@ -27,6 +27,8 @@ const totalGain = computed(() => {
     return props.actuelMois.reduce((acc, seance) => acc + calculerGain(seance), 0);
 });
 
+localStorage.setItem('cumulDuMois', totalGain.value);
+
 function dateToFr(date) {
     const d = new Date(date);
     return d.toLocaleDateString('fr-FR');

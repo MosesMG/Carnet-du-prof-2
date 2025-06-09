@@ -12,6 +12,7 @@ const laDate = today.toLocaleDateString('fr-FR', options);
 
 const form = useForm({});
 const submit = () => {
+    localStorage.clear();
     form.post(route('logout'));
 }
 
@@ -52,14 +53,6 @@ const rappels = usePage().props.rappels;
                         href="#"
                         aria-expanded="false">
                         <div class="avatar-sm">
-                            <!-- <img
-                                @if (session()->exists('avatar'))
-                                    src="{{ session('avatar') }}"
-                                @else
-                                    src="{{ asset('assets/images/user-icon.jpg') }}"
-                                @endif
-                                alt="avatar"
-                                class="avatar-img rounded-circle" /> -->
                             <img src="/images/user-icon.jpg" alt="" class="avatar-img rounded-circle">
                         </div>
                         <span class="profile-username">
@@ -71,15 +64,6 @@ const rappels = usePage().props.rappels;
                             <li>
                                 <div class="user-box align-items-center">
                                     <div class="avatar-lg me-1">
-                                        <!-- <img
-                                            @if (session()->exists('avatar'))
-                                                src="{{ session('avatar') }}"
-                                            @else
-                                                src="{{ asset('assets/images/user-icon.jpg') }}"
-                                            @endif
-                                            alt="image_profile"
-                                            class="avatar-img rounded-4" /> -->
-
                                         <img src="/images/user-icon.jpg" alt="image_profile" class="avatar-img rounded-4">
                                     </div>
                                     <div class="u-text px-0">

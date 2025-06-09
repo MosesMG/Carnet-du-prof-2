@@ -100,16 +100,9 @@ const submit = () => {
                         />
                     </div>
 
-                    <div class="mt-6 flex items-center justify-around">
-                        <div>
-                            <a href="/auth/google" class="flex items-center gap-2 py-2 px-6 border border-white rounded-lg bg-red-100 hover:bg-white hover:border hover:border-red-600 transition-all">
-                                <span class="text-sm font-medium">ou utiliser</span>
-                                <i class="fab fa-google text-red-600"></i>
-                            </a>
-                        </div>
-
+                    <div class="mt-6 flex items-center justify-center">
                         <PrimaryButton
-                            class="ms-4"
+                            class="px-7 py-2.5"
                             :class="{ 'opacity-25': form.processing }"
                             :disabled="form.processing"
                         >
