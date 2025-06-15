@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('seances', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->time('heure_debut');
+            $table->time('heure_debut')->nullable();
             $table->time('heure_fin')->nullable();
             $table->text('description')->nullable();
             $table->foreignId('matiere_id')->constrained()->cascadeOnDelete();

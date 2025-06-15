@@ -101,19 +101,16 @@ function formatHeure(heure) {
                         la section "Les universités" du menu
                     </p>
                 </div>
-
             </div>
 
-            <div class="tab-pane fade py-3" id="two-tab-pane" role="tabpanel" 
-                aria-labelledby="profile-tab" tabindex="0">
-
+            <div class="tab-pane fade py-3" id="two-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
                 <div class="row gy-2 w-75 mx-auto">
                     <div class="col-sm-12 col-md-6">
                         <div class="card card-stats card-round">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-5">
-                                        <div class="icon-big text-center icon-secondary">
+                                        <div class="icon-big text-center icon-secondary py-4">
                                             <i class="icon-graduation"></i>
                                         </div>
                                     </div>
@@ -135,14 +132,14 @@ function formatHeure(heure) {
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-5">
-                                        <div class="icon-big text-center icon-info">
+                                        <div class="icon-big text-center icon-info py-4">
                                             <i class="icon-bell"></i>
                                         </div>
                                     </div>
                                     <div class="col-7 col-stats">
                                         <div class="numbers">
                                             <Link :href="route('les.rappels')">
-                                                <p class="card-category">Notifications</p>
+                                                <p class="card-category">Rappels</p>
                                                 <h4 class="card-title">Explorer</h4>
                                             </Link>
                                         </div>
@@ -157,14 +154,14 @@ function formatHeure(heure) {
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-5">
-                                        <div class="icon-big text-center icon-success">
+                                        <div class="icon-big text-center icon-success py-4">
                                             <i class="icon-wallet"></i>
                                         </div>
                                     </div>
                                     <div class="col-7 col-stats">
                                         <div class="numbers">
                                             <Link :href="route('les.donnees')">
-                                                <p class="card-category">Revenu cumulé ce mois</p>
+                                                <p class="card-category">Revenu total ce mois</p>
                                                 <h4 class="card-title">{{ cumulMois ?? 0 }} F</h4>
                                             </Link>
                                         </div>
@@ -179,7 +176,7 @@ function formatHeure(heure) {
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-5">
-                                        <div class="icon-big text-center icon-danger">
+                                        <div class="icon-big text-center icon-danger py-4">
                                             <i class="icon-user"></i>
                                         </div>
                                     </div>

@@ -10,15 +10,12 @@ class HomeController extends Controller
 {
     public function accueil()
     {
-        $today = Carbon::createFromDate(now()->year, now()->month, now()->day);
-        $dayWeek = $today->toArray()['dayOfWeek'];
-        $dayWeek = ($dayWeek == 0) ? 7 : $dayWeek;
-        
+        $today = now()->isoWeekday();
         $user = auth()->guard('web')->user();
         $aujMatieres = $user->matieres()->with('filiere.site.universite')
-                            ->where('jour', '=', $dayWeek)
+                            ->where('jour', '=', $today)
                             ->orderBy('heure_debut')->get();
-        
+
         return inertia('Accueil', [
             'matieres' => $aujMatieres,
         ]);

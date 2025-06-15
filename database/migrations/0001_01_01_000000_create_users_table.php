@@ -20,7 +20,6 @@ return new class extends Migration
             $table->date('datenais')->nullable();
             $table->string('telephone')->nullable();
             $table->string('password');
-            $table->string('social_id', 200)->nullable()->unique();
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();

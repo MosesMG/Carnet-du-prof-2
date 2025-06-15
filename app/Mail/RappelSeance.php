@@ -2,8 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Seance;
-use App\Models\User;
+use App\Models\Matiere;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -11,16 +10,16 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SeanceMail extends Mailable
+class RappelSeance extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public $datas)
+    public function __construct(public Matiere $matiere)
     {
-        
+        //
     }
 
     /**
@@ -29,7 +28,7 @@ class SeanceMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Rappel',
+            subject: 'Rappel de séance',
         );
     }
 
@@ -39,7 +38,7 @@ class SeanceMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'user.email.notification',
+            markdown: 'mail.rappel-seance',
         );
     }
 

@@ -68,7 +68,7 @@ const uploadStudentFile = () => {
                     </div>
 
                     <div>
-                        <button type="submit" ref="sendBtn" :disabled="(labelFile !== 'Fichier chargé')"
+                        <button type="submit" ref="sendBtn" :disabled="(labelFile !== 'Fichier chargé') || form.processing"
                             class="btn btn-outline-primary px-3 py-2">
                             Importer
                             <i class="fas fa-file-import"></i>
