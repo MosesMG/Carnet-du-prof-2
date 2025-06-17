@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Matiere;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -17,7 +18,7 @@ class RappelSeance extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public Matiere $matiere)
+    public function __construct(public Matiere $matiere, public User $user)
     {
         //
     }
@@ -29,6 +30,7 @@ class RappelSeance extends Mailable
     {
         return new Envelope(
             subject: 'Rappel de séance',
+            to: $this->user->email,
         );
     }
 

@@ -29,14 +29,13 @@ class EnvoyerRappel extends Command
         $today = now()->isoWeekday();
         $user = auth()->guard('web')->user();
         $aujMatieres = $user->matieres()->with('filiere.site.universite')
-                            ->where('jour', '=', $today)
-                            ->orderBy('heure_debut')->get();
+                            ->where('jour', '=', $today)->get();
 
         foreach ($aujMatieres as $matiere) {
             $heureDebut = now()->copy()->setTimeFromTimeString($matiere->heure_debut);
             $diff = now()->diffInMinutes($heureDebut, false);
 
-            if ($diff === -10) {
+            if ((int)$diff === 30) {
                 EnvoyerRappelJob::dispatch($matiere);
             }
         }

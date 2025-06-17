@@ -84,7 +84,7 @@ items.push(
             <!-- Autres informations -->
             <div class="tab-pane fade" id="others-tab-pane" role="tabpanel" aria-labelledby="others-tab" tabindex="0">
                 
-                <AutresInfos :filiere="props.filiere" :etudiants="props.etudiants" :tauxHr="props.tauxhr" />
+                <AutresInfos :filiere="props.filiere" :etudiants="props.etudiants" :tauxHr="props.tauxhr" :matieres="props.matieres" />
 
             </div>
         </div>

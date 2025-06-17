@@ -10,7 +10,7 @@
 <x-mail::message>
 # Rappel de cours
 
-## Bonjour M., nous vous rappelons que vous avez cours aujourd'hui
+## Bonjour M. {{ $user->name }}, nous vous rappelons que vous avez cours aujourd'hui
 
 <div class="message">
 

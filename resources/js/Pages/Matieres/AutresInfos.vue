@@ -5,6 +5,7 @@ const props = defineProps({
     filiere: Object,
     etudiants: Array,
     tauxHr: Number,
+    matieres: Array,
 })
 
 const form = useForm({
@@ -29,8 +30,8 @@ const submit = () => {
             <hr>
             <div class="d-flex justify-content-between align-items-center">
                 Taux horaire :
-                <button type="button" class="btn btn-link fs-5" title="Fixer le taux horaire" data-bs-toggle="modal"
-                    data-bs-target="#tauxhr">
+                <button type="button" class="btn btn-link fs-5" title="Fixer le taux horaire"
+                        data-bs-toggle="modal" data-bs-target="#tauxhr">
                     <span v-if="!props.tauxHr">Fixer</span>
                     <span v-else>{{ props.tauxHr }} FCFA</span>
                 </button>
@@ -47,6 +48,9 @@ const submit = () => {
                 
                 <form @submit.prevent="submit">
                     <div class="modal-content p-4">
+                        <span class="text-center text-sm mb-3 text-danger-emphasis" v-if="props.matieres.length === 0">
+                            Veuilez d'abord enregistrer la(les) matière(s).
+                        </span>
                         <div class="input-group">
                             <label for="taux_hr" class="input-group-text">Saisir le montant</label>
                             <input type="number" name="taux_hr" min="0" class="form-control"
