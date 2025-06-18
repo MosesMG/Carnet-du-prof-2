@@ -8,4 +8,4 @@ Artisan::command('inspire', function (): void {
 })->purpose('Display an inspiring quote')->hourly();
 
 // Envoyer les rappels
-Artisan::command('envoyer:rappels', function () {})->everyMinute();
+// Artisan::command('envoyer:rappels', function () {})->everyMinute();

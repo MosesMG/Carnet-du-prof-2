@@ -50,7 +50,7 @@ class EnvoyerRappelJob implements ShouldQueue
                 'seance_id' => $seance->id,
             ]);
 
-            $user = auth()->guard('web')->user();
+            $user = Auth::guard('web')->user();
             Mail::to($user->email)->send(new RappelSeance($this->matiere, $user));
         }
     }

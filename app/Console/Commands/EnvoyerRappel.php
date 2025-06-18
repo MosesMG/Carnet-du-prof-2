@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\EnvoyerRappelJob;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class EnvoyerRappel extends Command
@@ -32,12 +33,14 @@ class EnvoyerRappel extends Command
                             ->where('jour', '=', $today)->get();
 
         foreach ($aujMatieres as $matiere) {
-            $heureDebut = now()->copy()->setTimeFromTimeString($matiere->heure_debut);
-            $diff = now()->diffInMinutes($heureDebut, false);
+            // $heureDebut = now()->copy()->setTimeFromTimeString($matiere->heure_debut);
+            // $diff = now()->diffInMinutes($heureDebut, false);
+            $heureDebut = Carbon::parse($matiere->heure_debut);
+            $envoi = $heureDebut->subSeconds(10);
 
-            if ((int)$diff === 30) {
-                EnvoyerRappelJob::dispatch($matiere);
-            }
+            // if ((int)$diff === -1) {
+                EnvoyerRappelJob::dispatch($matiere)->delay($envoi);
+            // }
         }
     }
 }
