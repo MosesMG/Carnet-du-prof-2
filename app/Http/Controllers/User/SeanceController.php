@@ -32,8 +32,26 @@ class SeanceController extends Controller
             ];
         });
 
-        $seances = Seance::where('matiere_id', '=', $matiere->id)
-                        ->orderByDesc('date')->get();
+        // $seances = Seance::where('matiere_id', '=', $matiere->id)
+        //                 ->orderByDesc('date')->get();
+
+        $user = auth()->guard('web')->user();
+
+        $seances = Seance::with('matiere')
+            ->whereDate('date', now()->toDateString())
+            ->whereHas('matiere', function ($query) use ($user) {
+            $query->whereHas('users', fn ($q) => $q->where('users.id', $user->id));
+        })
+        ->get()
+        ->map(fn ($seance) => [
+            'id' => $seance->id,
+            'matiere' => $seance->matiere->intitule,
+            'date' => $seance->date,
+            'heure_debut' => $seance->heure_debut,
+            'heure_fin' => $seance->heure_fin,
+            'etat' => $seance->etat,
+        ]);
+        // dd($seances);
 
         return inertia('Seances/Index', [
             'matiere' => $matiere,

@@ -90,7 +90,7 @@ function dateToFr(date) {
                     </td>
                     <td class="font-medium">{{ calculerGain(seance) }} F</td>
                     <td>
-                        <Link class="btn btn-label-secondary py-2"
+                        <Link class="btn btn-label-secondary btn-sm py-2"
                             :href="route('seance.show', {
                                 seance: seance,
                                 matiere: seance.matiere,

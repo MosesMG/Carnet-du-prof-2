@@ -21,7 +21,7 @@ class EnvoiRappelJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public Matiere $matiere, public User $user)
+    public function __construct(public User $user)
     {}
 
     /**
@@ -29,43 +29,42 @@ class EnvoiRappelJob implements ShouldQueue
      */
     public function handle(): void
     {
-        // $oneHour = now()->addMinutes(4);
+        $oneHour = now()->addHour();
 
-        // $matieres = $this->user->matieres()->with('filiere.site.universite')
-        //                 ->where('jour', '=', now()->isoWeekday())
-        //                 ->where('heure_debut', '=', $oneHour->format('H:i'))
-        //                 ->get();
+        $matieres = $this->user->matieres()->with('filiere.site.universite')
+                        ->where('jour', '=', now()->isoWeekday())
+                        ->where('heure_debut', '=', $oneHour->format('H:i'))
+                        ->get();
 
-        // foreach ($this->matieres as $matiere) {
-        try {
-            $existe = $this->matiere->seances()
-                            ->whereDate('date', '=',  now()->toDateString())
-                            ->exists();
+        foreach ($matieres as $matiere) {
+            try {
+                $existe = Seance::where('matiere_id', '=', $matiere->id)
+                                ->whereDate('date', '=',  $oneHour->toDateString())
+                                ->exists();
 
-            if (!$existe) {
+                if ($existe) continue;
 
                 $seance = Seance::create([
-                    'date' => now()->toDateString(),
+                    'date' => $oneHour->toDateString(),
                     'heure_debut' => null,
                     'heure_fin' => null,
-                    'matiere_id' => $this->matiere->id,
+                    'matiere_id' => $matiere->id,
                 ]);
 
-                Mail::to($this->user->email)->send(new RappelSeance($this->matiere, $this->user));
+                Mail::to($this->user->email)->send(new RappelSeance($matiere, $this->user));
 
                 Rappel::create([
                     'titre' => "Rappel",
-                    'message' => 'Cours de ' . $this->matiere->intitule . ' de ' .
-                            Carbon::parse($this->matiere->heure_debut)->format('H:i') . ' à ' .
-                            Carbon::parse($this->matiere->heure_fin)->format('H:i'),
+                    'message' => 'Cours de ' . $matiere->intitule . ' de ' .
+                            Carbon::parse($matiere->heure_debut)->format('H:i') . ' à ' .
+                            Carbon::parse($matiere->heure_fin)->format('H:i'),
                     'seance_id' => $seance->id,
                 ]);
             }
-        // }
-        }
-        catch (\Exception $e) {
-            Log::error("Erreur d'envoi de rappel" . $e->getMessage());
-            throw $e;
+            catch (\Exception $e) {
+                Log::error("Erreur d'envoi de rappel" . $e->getMessage());
+                throw $e;
+            }
         }
     }
 }

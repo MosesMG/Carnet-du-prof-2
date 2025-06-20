@@ -169,18 +169,19 @@ function diffHeure(h1, h2) {
 
             <!-- Détails -->
             <div class="tab-pane fade" id="seance-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-                <table class="table table-striped w-50 mx-auto my-4">
+                <table class="table table-striped w-75 mx-auto my-4">
                     <thead>
                         <tr>
                             <th>Date</th>
                             <th>Intervalle</th>
                             <th>Temps</th>
+                            <th>État</th>
                             <th>Voir plus</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-if="props.seances.length === 0">
-                            <td colspan="4">
+                            <td colspan="5">
                                 <h5 class="text-center">Vous n'avez pas encore eu de séances pour ce cours.</h5>
                             </td>
                         </tr>
@@ -197,6 +198,16 @@ function diffHeure(h1, h2) {
                                 </td>
                                 <td>{{ diffHeure(seance.heure_fin, seance.heure_debut) }}</td>
                             </template>
+                            <td class="border px-4 py-2 text-capitalize">
+                                <span :class="{
+                                    'text-green-600 font-semibold': seance.etat === 'terminée',
+                                    'text-blue-600 font-semibold': seance.etat === 'en cours',
+                                    'text-yellow-600 font-semibold': seance.etat === 'à venir',
+                                    'text-red-600 font-semibold': seance.etat === 'non tenue',
+                                }">
+                                    {{ seance.etat }}
+                                </span>
+                            </td>
                             <td>
                                 <Link :href="route('seance.show', {
                                     matiere: props.matiere, seance: seance

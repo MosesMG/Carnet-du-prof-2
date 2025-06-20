@@ -68,7 +68,7 @@ function dateToFr(date) {
                         <td class="font-medium">{{ calculerGain(seance).toLocaleString() }} F</td>
                         <td>
                             <Link
-                                class="btn btn-label-secondary py-2"
+                                class="btn btn-label-secondary btn-sm py-2"
                                 :href="route('seance.show', {
                                     seance: seance,
                                     matiere: seance.matiere,

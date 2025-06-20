@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Jobs\EnvoiRappelJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -10,7 +9,7 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->job(new EnvoiRappelJob)->everyMinute();
+        $schedule->command('envoyer:rappels')->everyMinute();
     }
 
     protected function commands(): void
