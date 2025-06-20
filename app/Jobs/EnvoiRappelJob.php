@@ -6,10 +6,13 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Rappel;
 use App\Models\Seance;
+use App\Models\Matiere;
 use App\Mail\RappelSeance;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Collection;
 
 class EnvoiRappelJob implements ShouldQueue
 {
@@ -18,60 +21,51 @@ class EnvoiRappelJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(public Matiere $matiere, public User $user)
+    {}
 
     /**
      * Execute the job.
      */
     public function handle(): void
     {
-        $oneHour = now()->addMinutes(0);
+        // $oneHour = now()->addMinutes(4);
 
-        // $users = User::whereHas('matieres', function ($query) use ($oneHour) {
-        //     $query->where('jour', '=', $oneHour->isoWeekday())
-        //         ->where('heure_debut', '=', $oneHour->format('H:i'));
-        // })->with(['matieres' => function ($query) use ($oneHour) {
-        //     $query->where('jour', '=', $oneHour->isoWeekday())
-        //         ->where('heure_debut', '=', $oneHour->format('H:i'))
-        //         ->with('filiere.site.universite');
-        // }])->get();
+        // $matieres = $this->user->matieres()->with('filiere.site.universite')
+        //                 ->where('jour', '=', now()->isoWeekday())
+        //                 ->where('heure_debut', '=', $oneHour->format('H:i'))
+        //                 ->get();
 
-        $matieres = $user->matieres()->with('filiere.site.universite')
-                        ->where('jour', '=', now()->isoWeekday())
-                        ->where('heure_debut', '=', $oneHour->format('H:i'))
-                        ->get();
+        // foreach ($this->matieres as $matiere) {
+        try {
+            $existe = $this->matiere->seances()
+                            ->whereDate('date', '=',  now()->toDateString())
+                            ->exists();
 
-        // foreach ($users as $user) {
-            foreach ($matieres as $matiere) {
-                $existe = Seance::where('matiere_id', '=', $matiere->id)
-                                ->whereDate('date', '=', $oneHour->toDateString())
-                                ->exists();
-    
-                if ($existe) continue;
-    
+            if (!$existe) {
+
                 $seance = Seance::create([
-                    'date' => $oneHour->toDateString(),
+                    'date' => now()->toDateString(),
                     'heure_debut' => null,
                     'heure_fin' => null,
-                    'matiere_id' => $matiere->id,
+                    'matiere_id' => $this->matiere->id,
                 ]);
-    
-                $user = $matiere->users->first();
-                if ($user && $user->email) {
-                    Mail::to($user->email)->send(new RappelSeance($matiere, $user));
-    
-                    Rappel::create([
-                        'titre' => "Rappel",
-                        'message' => 'Cours de ' . $matiere->intitule . ' de ' .
-                                Carbon::parse($matiere->heure_debut)->format('H:i') . ' à ' .
-                                Carbon::parse($matiere->heure_fin)->format('H:i'),
-                        'seance_id' => $seance->id,
-                    ]);
-                }
+
+                Mail::to($this->user->email)->send(new RappelSeance($this->matiere, $this->user));
+
+                Rappel::create([
+                    'titre' => "Rappel",
+                    'message' => 'Cours de ' . $this->matiere->intitule . ' de ' .
+                            Carbon::parse($this->matiere->heure_debut)->format('H:i') . ' à ' .
+                            Carbon::parse($this->matiere->heure_fin)->format('H:i'),
+                    'seance_id' => $seance->id,
+                ]);
             }
         // }
+        }
+        catch (\Exception $e) {
+            Log::error("Erreur d'envoi de rappel" . $e->getMessage());
+            throw $e;
+        }
     }
 }

@@ -352,7 +352,7 @@ body {
   float: right;
   transition: all .3s; }
   .main-panel > .container {
-    min-height: calc(100% - 123px);
+    min-height: calc(100% - 115px);
     margin-top: 69px;
     overflow: hidden;
     width: 100%;

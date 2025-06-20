@@ -10,7 +10,7 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->job(new EnvoiRappelJob)->everyMinute();
+        // $schedule->job(new EnvoiRappelJob)->everyMinute();
     }
 
     protected function commands(): void

@@ -4,6 +4,10 @@ namespace App\Mail;
 
 // use App\Models\Matiere;
 // use App\Models\User;
+
+use App\Models\Matiere;
+use App\Models\Seance;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -18,7 +22,7 @@ class RappelSeance extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public $matiere, public $user)
+    public function __construct(public Matiere $matiere, public User $user)
     {
         //
     }

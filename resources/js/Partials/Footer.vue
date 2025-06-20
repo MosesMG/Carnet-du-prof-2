@@ -3,8 +3,8 @@ import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <footer class="footer text-xs">
-        <div class="container-fluid d-flex justify-content-between">
+    <footer class="footer">
+        <div class="container-fluid d-flex justify-content-between text-xs">
             <nav class="pull-left">
                 <Link :href="route('dashboard')" class="nav-link">
                     {{ $page.props.appName }}
