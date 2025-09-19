@@ -2,8 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\EnvoiRappelJob;
 use App\Jobs\GetAllUsersJob;
+use App\Models\Rappel;
+use App\Models\Seance;
+use App\Services\SeanceService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 
 class EnvoyerRappel extends Command
 {
@@ -21,12 +27,17 @@ class EnvoyerRappel extends Command
      */
     protected $description = 'Envoi automatique des rappels pour les séances du jour';
 
+    public function __construct(protected SeanceService $seanceService)
+    {
+        parent::__construct();
+    }
+
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        dispatch(new GetAllUsersJob());
-        $this->info('Envoi des rappels déclenché.');
+        $this->seanceService->creerSeances();
+        $this->info('Séances créées et rappels planifiés avec succès');
     }
 }

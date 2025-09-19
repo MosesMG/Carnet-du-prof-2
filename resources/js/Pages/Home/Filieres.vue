@@ -36,21 +36,28 @@ else {
 
         <h4 class="text-center mt-4">Choisir une filière </h4>
 
-        <div class="row g-4 mx-auto my-4" style="max-width:500px">
-
-            <div class="col-12 bg-white fs-5 py-2" v-for="filiere in props.filieres" :key="filiere.id">
-                <Link :href="route('mes.matieres', filiere)" class="text-dark-emphasis">
-                <span class="fw-bold">
-                    {{ filiere.libelle }} :
-                </span>
-                <span>
-                    {{ filiere.description }}
-                </span>
-                </Link>
+        <div class="container-fluid">
+            <div class="row justify-content-center g-5 mt-1 mb-4 mx-5">
+                <div
+                    v-for="filiere in props.filieres" :key="filiere.id"
+                    class="col-sm-6 col-md-4 col-lg-3 text-dark-emphasis"
+                >
+                    <Link :href="route('mes.matieres', filiere)">
+                        <div class="p-2 bg-white rounded-3">
+                            <div class="d-flex justify-content-center">
+                                <div class="my-2">
+                                    <i class="fa fa-book-reader fs-3 text-dark"></i>
+                                </div>
+                            </div>
+                            <h5 class="fw-semibold text-center uppercase text-dark">{{ filiere.libelle }}</h5>
+                            <div class="d-flex justify-content-center gap-x-4 align-items-center mb-2">
+                                <span class="text-danger-emphasis fw-semibold text-center">{{ filiere.description }}</span>
+                            </div>
+                        </div>
+                    </Link>
+                </div>
             </div>
-
         </div>
 
     </DashboardLayout>
-
 </template>

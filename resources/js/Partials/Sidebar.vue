@@ -36,7 +36,6 @@ const mesUniversites = usePage().props.mesUniversites;
         </div>
         <div class="sidebar-wrapper scrollbar scrollbar-inner">
             <div class="sidebar-content">
-
                 <ul class="nav nav-primary">
                     <li class="nav-item" :class="{ 'active' : $page.url === '/accueil' }">
                         <Link :href="route('dashboard')">
@@ -114,8 +113,14 @@ const mesUniversites = usePage().props.mesUniversites;
                             <p class="text-uppercase text-white">Paramètres du profil</p>
                         </Link>
                     </li>
-                </ul>
 
+                    <li class="nav-item" :class="{ 'active' : $page.url === '/email' }">
+                        <Link :href="route('test.mail')">
+                            <i class="fa fa-envelope text-white"></i>
+                            <p class="text-uppercase text-white">Test Mail</p>
+                        </Link>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
