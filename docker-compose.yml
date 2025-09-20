@@ -1,0 +1,51 @@
+# version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    ports:
+      - "8000:9000"   # php artisan serve exposé sur localhost:8000
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_KEY: base64:changemoi+
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+
+  db:
+    image: mysql:8.0
+    container_name: laravel_db
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+
+  npm:
+    image: node:20
+    container_name: laravel_npm
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5173:5173"  # Vite dev server accessible
+
+volumes:
+  db_data:

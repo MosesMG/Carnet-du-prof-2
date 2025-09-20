@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\DataNotifController;
@@ -69,9 +68,6 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/donnees', 'index')->name('les.donnees');
     });
-
-    Route::get('/email', [TestController::class, 'index'])->name('test.mail');
-    Route::post('/email', [TestController::class, 'sendMail'])->name('mail.send');
 });
 
 require __DIR__.'/auth.php';

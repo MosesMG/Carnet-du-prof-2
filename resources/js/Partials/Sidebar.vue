@@ -113,13 +113,6 @@ const mesUniversites = usePage().props.mesUniversites;
                             <p class="text-uppercase text-white">Paramètres du profil</p>
                         </Link>
                     </li>
-
-                    <li class="nav-item" :class="{ 'active' : $page.url === '/email' }">
-                        <Link :href="route('test.mail')">
-                            <i class="fa fa-envelope text-white"></i>
-                            <p class="text-uppercase text-white">Test Mail</p>
-                        </Link>
-                    </li>
                 </ul>
             </div>
         </div>
